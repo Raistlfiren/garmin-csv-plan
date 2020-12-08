@@ -162,7 +162,7 @@ abstract class AbstractHandler implements HandlerInterface
         //Loop through steps and add their notes
         foreach ($steps as $step) {
             if (! $handlerOptions->getDryrun()) {
-                $this->client->createNote($step->getGarminID(), $step->getNotes(), $step->getWorkout()->getGarminID());
+                $this->client->createStepNote($step->getGarminID(), $step->getNotes(), $step->getWorkout()->getGarminID());
             }
         }
     }
