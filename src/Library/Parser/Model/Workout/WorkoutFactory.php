@@ -12,6 +12,8 @@ class WorkoutFactory
                 return $workout->steps($steps);
                 break;
             case 'cycling':
+                $workout = new CyclingWorkout($name);
+                return $workout->steps($steps);
                 break;
             default:
                 break;
