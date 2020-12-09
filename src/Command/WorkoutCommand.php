@@ -47,6 +47,7 @@ class WorkoutCommand extends Command
             ->addOption('email', 'm',InputOption::VALUE_REQUIRED, 'Email to login to Garmin', '')
             ->addOption('password', 'p', InputOption::VALUE_REQUIRED, 'Password to login to Garmin', '')
             ->addOption('delete', 'x', InputOption::VALUE_NONE, 'Delete previous workouts')
+            ->addOption('delete-only', 'X', InputOption::VALUE_NONE, 'Delete previous workouts but do not create new ones')
             ->addOption('dry-run', null, InputOption::VALUE_NONE, 'Dry run that will prevent anything from being created or deleted from Garmin')
             ->addOption('prefix', 'r', InputOption::VALUE_OPTIONAL, 'A prefix to put before every workout name/title', null)
             ->addOption('start', 's', InputOption::VALUE_REQUIRED, 'Date of the first day of the first week of the plan')
@@ -65,6 +66,7 @@ class WorkoutCommand extends Command
         $prefix = $input->getOption('prefix');
         $dryrun = $input->getOption('dry-run');
         $delete = $input->getOption('delete');
+        $deleteOnly = $input->getOption('delete-only');
         $path = $input->getArgument('csv');
         $start = $input->getOption('start');
         $end = $input->getOption('end');
@@ -75,7 +77,8 @@ class WorkoutCommand extends Command
         $handlerOptions->setPassword($password);
         $handlerOptions->setPrefix($prefix);
         $handlerOptions->setDryrun($dryrun);
-        $handlerOptions->setDelete($delete);
+        $handlerOptions->setDelete($delete||$deleteOnly);
+        $handlerOptions->setDeleteOnly($deleteOnly);
         $handlerOptions->setPath($path);
         $handlerOptions->setStartDate($start);
         $handlerOptions->setEndDate($end);

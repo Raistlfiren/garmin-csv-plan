@@ -89,6 +89,10 @@ abstract class AbstractHandler implements HandlerInterface
 
     public function createWorkouts(HandlerOptions $handlerOptions, array $days)
     {
+        if ($handlerOptions->getDeleteOnly()) {
+            return;
+        }
+
         $debugMessages = [];
         $event = new HandlerEvent($handlerOptions);
         $this->dispatcher->dispatch($event, HandlerEvents::CREATED_WORKOUTS_STARTED);
@@ -157,6 +161,10 @@ abstract class AbstractHandler implements HandlerInterface
 
     public function attachNotes(HandlerOptions $handlerOptions, PeriodCollection $period)
     {
+        if ($handlerOptions->getDeleteOnly()) {
+            return;
+        }
+        
         $steps = $period->getStepsWithNotes();
 
         //Loop through steps and add their notes
