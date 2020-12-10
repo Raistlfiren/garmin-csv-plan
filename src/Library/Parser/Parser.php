@@ -70,14 +70,51 @@ class Parser
 
                 $week->addDay($entityDay);
 
-                $workout = $record[$day];
+                $recordLines = preg_split("/((\r?\n)|(\r\n?))/", $record[$day]);
+                $lineNumbers = count($recordLines);
+                $lineNumber = 0;
+                $workout = "";
+                $workoutArr = array();
+                foreach ($recordLines as $recordLine) {
+                    $lineNumber++;
+                    if (! empty($recordLine)) {
+                        $regex = '/^(' . implode('|',WorkoutTypes::WORKOUTS) . ')?:/';
+                        $result = preg_match($regex, $recordLine, $workoutType);
 
-                if (! empty($workout)) {
+                        // new workout
+                        if ($result && isset($workoutType[1]) && ! empty($workoutType[1])) {
+                            // push previous workout to array
+                            if ($workout != "") {
+                                array_push($workoutArr, $workout);
+                            }
+                            $workout = $recordLine . "\n";
+                        }
+                        else {
+                            $workout .= $recordLine . "\n";
+                            // last line
+                            if($lineNumber === $lineNumbers) {
+                                array_push($workoutArr, $workout);
+                            }
+                        }
+                    }
+                }
+
+                $workoutNumbers = count($workoutArr);
+                $workoutNumber = 0;
+                foreach ($workoutArr as $workout) {
+                    $workoutNumber++;
                     $workout = $this->parseWorkout($workout);
                     $name = $prefix . $workout->getName();
                     $workout->setName($name);
+                    if ($workoutNumbers > 1) {
+                        $this->debugMessages[$debugCounter] .= $workoutNumber . ". ";
+                    }
                     $this->debugMessages[$debugCounter] .= (empty($workout->getName()) ? 'Workout parsed.' : $workout->getName());
+                    if ($workoutNumbers > 1 && $workoutNumber < $workoutNumbers) {
+                        $this->debugMessages[$debugCounter] .= "  -  ";
+                    }
                     $entityDay->addWorkout($workout);
+                    
                 }
                 $debugCounter++;
             }
