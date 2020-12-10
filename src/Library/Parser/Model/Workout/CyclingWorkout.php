@@ -6,11 +6,11 @@ class CyclingWorkout extends AbstractWorkout
 {
     protected function getSportTypeId()
     {
-        // TODO: Implement getSportTypeId() method.
+        return 2;
     }
 
     protected function getSportTypeKey()
     {
-        // TODO: Implement getSportTypeKey() method.
+        return 'cycling';
     }
 }
