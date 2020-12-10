@@ -10,6 +10,9 @@ class StepFactory
             case 'warmup':
                 return new WarmupStep($parameters, $notes, $order);
                 break;
+            case 'cooldown':
+                return new CooldownStep($parameters, $notes, $order);
+                break;
             case 'run':
             case 'bike':
             case 'go':
@@ -18,8 +21,8 @@ class StepFactory
             case 'recover':
                 return new RecoverStep($parameters, $notes, $order);
                 break;
-            case 'cooldown':
-                return new CooldownStep($parameters, $notes, $order);
+            case 'rest':
+                return new RestStep($parameters, $notes, $order);
                 break;
             case 'repeat':
                 break;
