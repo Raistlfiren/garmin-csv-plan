@@ -27,6 +27,11 @@ class HandlerOptions
     private $delete;
 
     /**
+     * @var bool|false
+     */
+    private $deleteOnly;
+
+    /**
      * @var DateTime|string|null
      */
     private $startDate;
@@ -120,6 +125,24 @@ class HandlerOptions
     public function setDelete($delete)
     {
         $this->delete = $delete;
+        return $this;
+    }
+
+    /**
+     * @return bool|false
+     */
+    public function getDeleteOnly()
+    {
+        return $this->deleteOnly;
+    }
+
+    /**
+     * @param bool|false $deleteOnly
+     * @return HandlerOptions
+     */
+    public function setDeleteOnly($deleteOnly)
+    {
+        $this->deleteOnly = $deleteOnly;
         return $this;
     }
 
