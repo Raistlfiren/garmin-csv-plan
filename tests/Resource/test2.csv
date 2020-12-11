@@ -1,0 +1,12 @@
+"WEEK","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"
+"1","running: 10x30''30''
+- warmup: 20:00 @z3
+- repeat: 10
+  - run: 00:30
+  - recover: 00:30
+- recover: lap-button
+cycling: easy cycle
+- run: 30:00 @z1
+running: easy run
+- run: 30:00 @z2","","running: long run
+- run: 80:00 @z3","","","",""
