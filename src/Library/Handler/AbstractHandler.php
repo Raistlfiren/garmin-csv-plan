@@ -98,22 +98,35 @@ abstract class AbstractHandler implements HandlerInterface
         $this->dispatcher->dispatch($event, HandlerEvents::CREATED_WORKOUTS_STARTED);
 
         /** @var Day $day */
+        $workoutList = [];
         foreach ($days as $day) {
             /** @var AbstractWorkout $workout */
             foreach ($day->getWorkouts() as $workoutKey => $workout) {
                 $workoutID = '**********';
-                if (! $handlerOptions->getDryrun()) {
-                    $response = $this->client->createWorkout(json_encode($workout));
-                    $workoutID = $response->workoutId;
-                    $workoutSteps = $this->findWorkoutSteps($response->workoutSegments[0]);
-                    $allSteps = $workout->getAllSteps([], $workout->getSteps());
-                    foreach ($workoutSteps as $index => $workoutStep) {
-                        $allSteps[$index]->setGarminID($workoutStep['id']);
-                    }
-                    $workout->setGarminID($response->workoutId);
-                    $day->updateWorkout($workoutKey, $workout);
+                $workoutName = $workout->getName();
+                if ($handlerOptions->getDryrun()) {
+                    $debugMessages[] = 'Workout - ' . $workoutName . ' was created on the Garmin website with the id ' . $workoutID;
                 }
-                $debugMessages[] = 'Workout - ' . $workout->getName() . ' was created on the Garmin website with the id ' . $workoutID;
+                else {
+                    // same workout name already created?
+                    if ($workoutID = array_search($workoutName, $workoutList, true)) {
+                        $workout->setGarminID($workoutID);
+                        $debugMessages[] = 'Workout - ' . $workoutName . ' was previously created on the Garmin website with the id ' . $workoutID;
+                    }
+                    else {
+                        $response = $this->client->createWorkout(json_encode($workout));
+                        $workoutID = $response->workoutId;
+                        $workoutSteps = $this->findWorkoutSteps($response->workoutSegments[0]);
+                        $allSteps = $workout->getAllSteps([], $workout->getSteps());
+                        foreach ($workoutSteps as $index => $workoutStep) {
+                            $allSteps[$index]->setGarminID($workoutStep['id']);
+                        }
+                        $workout->setGarminID($response->workoutId);
+                        $workoutList[$response->workoutId] = $workoutName;
+                        $debugMessages[] = 'Workout - ' . $workoutName . ' was created on the Garmin website with the id ' . $workoutID;
+                        $day->updateWorkout($workoutKey, $workout);
+                    }
+                }
             }
         }
 
@@ -146,11 +159,11 @@ abstract class AbstractHandler implements HandlerInterface
 
         //Loop through workout names and delete them from Garmin
         foreach ($workoutNames as $workoutName) {
-            $workoutKey = array_search($workoutName, $workoutList, true);
-            if ($workoutKey) {
+            while ($workoutKey = array_search($workoutName, $workoutList, true)) {
                 if (! $handlerOptions->getDryrun()) {
                     $this->client->deleteWorkout($workoutKey);
                 }
+                unset($workoutList[$workoutKey]);
                 $debugMessages[] = 'Workout - ' . $workoutName . ' with id ' . $workoutKey . ' was deleted from the Garmin website.';
             }
         }
@@ -170,7 +183,10 @@ abstract class AbstractHandler implements HandlerInterface
         //Loop through steps and add their notes
         foreach ($steps as $step) {
             if (! $handlerOptions->getDryrun()) {
-                $this->client->createStepNote($step->getGarminID(), $step->getNotes(), $step->getWorkout()->getGarminID());
+                // if the step has no GarminID, it means the same workout was already created
+                if ($stepID = $step->getGarminID()) {
+                    $this->client->createStepNote($stepID, $step->getNotes(), $step->getWorkout()->getGarminID());
+                }
             }
         }
     }

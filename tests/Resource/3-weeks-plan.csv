@@ -1,0 +1,59 @@
+"WEEK","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"
+"1","","running: 6x3'@5k recover decreases
+- warmup: lap-button
+- run: 3:00 @3:50-3:54 mpk; @5k
+- recover: 02:30
+- run: 3:00 @3:50-3:54 mpk; @5k
+- recover: 2:00
+- run: 3:00 @3:50-3:54 mpk; @5k
+- recover: 1:30
+- run: 3:00 @3:50-3:54 mpk; @5k
+- recover: 1:00
+- run: 3:00 @3:50-3:54 mpk; @5k
+- recover: 00:30
+- run: 3:00 @3:50-3:54 mpk; @5k
+- recover: lap-button","running: 40'@z2-3
+- run: 40:00 @128 - 154 bpm","","running: 9x1'@5k r2'
+- warmup: 25:00 @128 - 154 bpm
+- repeat: 9
+   - run: 1:00 @3:45-3:55 mpk; @5k
+   - recover: 2:00 @z2
+- recover: 10:00 @z1","running: 30'@z3
+- warmup: 20:00 @128 - 154 bpm
+- run: 30:00 @z3
+- recover: 10:00 @z1","cycling: 2hrs cycling
+- bike: 120:00"
+"","","running: 4'@VO2Max 8'@5k 12'@10k
+- warmup: lap-button
+- run: 4:00 @3:43-3:47 mpk; @VO2Max
+- recover: 4:00
+- run: 8:00 @3:50-3:54 mpk; @5k
+- recover: 4:00
+- run: 12:00 @3:55-3:59 mpk; @10k
+- recover: lap-button","running: 40'@z2-3
+- run: 40:00 @128 - 154 bpm","","running: 9x1'@5k r1'30
+- warmup: 25:00 @128 - 154 bpm
+- repeat: 9
+   - run: 1:00 @3:45-3:55 mpk; @5k
+   - recover: 1:30 @z2
+- recover: 10:00 @z1","running: 40'@z3
+- warmup: 20:00 @128 - 154 bpm
+- run: 40:00 @z3
+- recover: 10:00 @z1","cycling: 3hrs cycling
+- bike: 180:00"
+"","","running: 2x12'@AS10-AS21
+- warmup: lap-button
+- repeat: 2
+  - run: 12:00 @3:55-4:08 mpk; @10k-21k
+  - recover: 4:00
+- recover: lap-button","cycling: 1hr30 cycling @z1
+- bike: 90:00 @z1","","running: 9x1'@5k r1'30
+- warmup: 25:00 @128 - 154 bpm
+- repeat: 9
+   - run: 1:00 @3:45-3:55 mpk; @5k
+   - recover: 1:30 @z2
+- recover: 10:00 @z1","running: 50'@z3
+- warmup: 20:00 @128 - 154 bpm
+- run: 40:00 @z3
+- recover: 10:00 @z1","cycling: cycle@feelings
+- bike: lap-button"
