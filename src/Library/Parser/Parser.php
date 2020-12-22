@@ -8,6 +8,7 @@ use App\Library\Parser\Model\PeriodCollection;
 use App\Library\Parser\Model\WeekCollection;
 use App\Library\Parser\Model\Workout\WorkoutFactory;
 use League\Csv\Reader;
+use Symfony\Component\Yaml\Yaml;
 use DateTime;
 
 class Parser
@@ -176,15 +177,11 @@ class Parser
 
     public function parseSteps($stepsText)
     {
-        $regex = '/^(\s*-.*)$/m';
-
-        $result = preg_match_all($regex, $stepsText, $steps);
-
-        if ($result && isset($steps[0]) && ! empty($steps[0])) {
-            return $steps[0];
-        }
-
-        return null;
+        // create a valid parseable Yaml string
+        $stepsText = preg_replace("/(( *)- repeat: \d+)\n/", "$1\n$2  steps:\n", $stepsText);
+        $stepsText = preg_replace("/(( *)- \w+:.*);\s*(.*)\n/", "$1\n$2  notes: \"$3\"\n", $stepsText);
+        $steps = Yaml::parse($stepsText);
+        return $steps;
     }
 
     public function parseWorkout($workoutText)
