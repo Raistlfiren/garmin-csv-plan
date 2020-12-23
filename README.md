@@ -12,3 +12,35 @@ It also has the ability to:
 2) Run `composer install`
 3) Put your username and password in `.env` file
 4) Run the application by `./bin/console garmin:workout`
+
+## Running the program through Docker
+1) Copy the CSV file to the root directory (The file will then be copied to the Docker container)
+2) `docker-compose run garmin ./bin/console garmin:workout <file.csv>`
+
+## Developing and running the program through Docker
+1) Install dependencies - `docker-compose run composer install`
+   
+    a) Adding dependencies or removing dependencies can be done through `docker-compose run composer require <package>`
+    
+    b) Updating dependencies csn be done through `docker-compose run composer update`
+
+2)  Run the docker install by running `docker-compose up garmin-php` (This runs the docker container and keeps it up)
+3) Execute a command by running `docker-compose exec garmin-php bin/console garmin:workout ...`
+
+### Debugging the application through PhpStorm
+1) If running linux, then you will need to modify the `docker-compose.yaml` file and add your IP in place of `host.docker.internal`
+2) Go to PhpStorm -> Settings -> Languages & Frameworks -> PHP -> Servers
+   
+   a) Click "+"
+   
+   b) Name docker-cli (Same as serverName under PHP_IDE_CONFIG environment variable)
+   
+   c) Host _
+   
+   d) Default 80
+   
+   e) Debugger Xdebug
+   
+   f) Check the checkbox next to "Use path mappings"
+   
+   g) Modify the absolute path on the server to /var/www/html
