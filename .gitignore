@@ -15,3 +15,6 @@
 /phpunit.xml
 ###< symfony/phpunit-bridge ###
 composer.lock
+
+#Remove docker override file
+docker-compose.override.yaml
