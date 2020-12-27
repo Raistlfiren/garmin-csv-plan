@@ -35,42 +35,67 @@ abstract class AbstractWorkout implements \JsonSerializable
         $repeaterStep = null;
 
         foreach ($steps as $index => $step) {
-            $header = array_key_first($step);
-            $parameters = $step[$header];
-            $notes = array_key_exists("notes", $step) ? $step["notes"] : "";
-
+            $repeater = $this->isRepeaterStep($step);
+            $header = $this->parseStepHeader($step);
+            $parameters = $this->parseStepDetails($step);
+            $notes = $this->parseStepNotes($step);
             if ($header === 'repeat') {
                 $repeaterStep = new RepeaterStep($parameters, $index);
                 $this->steps->add($repeaterStep);
-                $this->addStepsToRepeater($step["steps"], $repeaterStep, 1);
             } else {
-                $stepFactory = StepFactory::build($header, $parameters, $notes, $index);
-                $this->steps->add($stepFactory);
+                if ($repeater && $repeaterStep) {
+                    $stepFactory = StepFactory::build($header, $parameters, $notes, $index);
+                    $repeaterStep->addStep($stepFactory);
+                } else {
+                    $stepFactory = StepFactory::build($header, $parameters, $notes, $index);
+                    $this->steps->add($stepFactory);
+                }
             }
         }
 
         return $this;
     }
 
-    private function addStepsToRepeater($steps, $repeaterStep, $level)
+    public function isRepeaterStep($stepText)
     {
-        $subRepeaterStep = null;
-        
-        foreach ($steps as $index => $step) {
-            $header = array_key_first($step);
-            $parameters = $step[$header];
-            $notes = array_key_exists("notes", $step) ? $step["notes"] : "";
+        $regex = '/^\s{1,}-.*$/';
 
-            if ($header === 'repeat') {
-                $subRepeaterStep = new RepeaterStep($parameters, $index);
-                $repeaterStep->addStep($subRepeaterStep);
-                $nextLevel = $level + 1;
-                $this->addStepsToRepeater($step["steps"], $subRepeaterStep, $nextLevel);
-            }
-            else {
-                $stepFactory = StepFactory::build($header, $parameters, $notes, $index);
-                $repeaterStep->addStep($stepFactory);
-            }
+        $result = preg_match($regex, $stepText, $stepHeader);
+
+        return $result && isset($stepHeader[0]) && ! empty($stepHeader[0]);
+    }
+
+    public function parseStepHeader($stepText)
+    {
+        $regex = '/-\s*([^:]*)/';
+        $result = preg_match($regex, $stepText, $stepHeader);
+
+        if ($result && isset($stepHeader[1]) && ! empty($stepHeader[1])) {
+            return trim($stepHeader[1]);
+        }
+
+        return null;
+    }
+
+    public function parseStepDetails($stepText)
+    {
+        $regex = '/:\s*([^;]*)/';
+        $result = preg_match($regex, $stepText, $stepDetails);
+
+        if ($result && isset($stepDetails[1]) && ! empty($stepDetails[1])) {
+            return trim($stepDetails[1]);
+        }
+
+        return null;
+    }
+
+    public function parseStepNotes($stepText)
+    {
+        $regex = '/;\s*(.*)/';
+        $result = preg_match($regex, $stepText, $stepNotes);
+
+        if ($result && isset($stepNotes[1]) && ! empty($stepNotes[1])) {
+            return trim($stepNotes[1]);
         }
 
         return null;
