@@ -27,6 +27,18 @@ It also has the ability to:
 2)  Run the docker install by running `docker-compose up garmin-php` (This runs the docker container and keeps it up)
 3) Execute a command by running `docker-compose exec garmin-php bin/console garmin:workout ...`
 
+## Overriding Docker
+
+Create a **new** file in the root called `docker-compose.override.yaml`.
+
+```yaml
+version: '3.3'
+
+services:
+  garmin-dev:
+    environment:
+      XDEBUG_CONFIG: "client_host=<local_IP>"
+```
 ### Debugging the application through PhpStorm
 1) If running linux, then you will need to modify the `docker-compose.yaml` file and add your IP in place of `host.docker.internal`
 2) Go to PhpStorm -> Settings -> Languages & Frameworks -> PHP -> Servers
