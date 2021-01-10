@@ -10,6 +10,7 @@ use App\Library\Parser\Model\PeriodCollection;
 use App\Library\Parser\Model\Workout\AbstractWorkout;
 use App\Library\Parser\Model\Workout\WorkoutFactory;
 use App\Library\Parser\Parser;
+use dawguk\GarminConnect;
 use Symfony\Component\Console\Style\OutputStyle;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\EventDispatcher\EventDispatcher;
@@ -43,8 +44,7 @@ abstract class AbstractHandler implements HandlerInterface
     protected $parser;
 
     /**
-     * @var Client
-     */
+     * @var GarminConnect   */
     protected $client;
 
     /**
@@ -52,14 +52,42 @@ abstract class AbstractHandler implements HandlerInterface
      */
     protected $dispatcher;
 
-    public function __construct(Client $client, Parser $parser, EventDispatcherInterface $eventDispatcher)
+    /**
+     * @var string
+     */
+    protected $garminUsername;
+
+    /**
+     * @var string
+     */
+    protected $garminPassword;
+
+    public function __construct(Parser $parser, EventDispatcherInterface $eventDispatcher, $garminUsername, $garminPassword)
     {
         $this->parser = $parser;
-        $this->client = $client;
         $this->dispatcher = $eventDispatcher;
+        $this->garminUsername = $garminUsername;
+        $this->garminPassword = $garminPassword;
     }
 
     abstract public function handle(HandlerOptions $handlerOptions);
+
+    public function overrideClientCredentials($username, $password)
+    {
+        $credentials = [
+            'username' => $username,
+            'password' => $password,
+        ];
+
+        if (empty($username) && empty($password)) {
+            $credentials = [
+                'username' => $this->garminUsername,
+                'password' => $this->garminPassword,
+            ];
+        }
+
+        $this->client = new GarminConnect($credentials);
+    }
 
     public function getWorkoutNames(array $workouts)
     {

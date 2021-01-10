@@ -9,6 +9,7 @@ class ImportHandler extends AbstractHandler
 {
     public function handle(HandlerOptions $handlerOptions)
     {
+        $this->overrideClientCredentials($handlerOptions->getEmail(), $handlerOptions->getPassword());
         $this->validateFile($handlerOptions);
 //        $event = new HandlerEvent($handlerOptions);
 //        $this->dispatcher->dispatch($event, HandlerEvents::FILE_VALIDATION_STARTED);

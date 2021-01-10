@@ -12,6 +12,8 @@ class ScheduleHandler extends AbstractHandler
 {
     public function handle(HandlerOptions $handlerOptions)
     {
+        $this->overrideClientCredentials($handlerOptions->getEmail(), $handlerOptions->getPassword());
+
         $start = $this->convertStringToDate($handlerOptions->getStartDate());
         $end = $this->convertStringToDate($handlerOptions->getEndDate());
 

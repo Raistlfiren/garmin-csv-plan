@@ -2,7 +2,6 @@
 
 namespace App\Library\Parser;
 
-use App\Library\Garmin\Client;
 use App\Library\Parser\Model\Day;
 use App\Library\Parser\Model\PeriodCollection;
 use App\Library\Parser\Model\WeekCollection;
@@ -15,17 +14,8 @@ class Parser
 {
     /** @var Reader $csv */
     protected $csv;
-    /**
-     * @var Client
-     */
-    private $client;
 
     protected $debugMessages = [];
-
-    public function __construct(Client $client)
-    {
-        $this->client = $client;
-    }
 
     public function isValidFile($path)
     {

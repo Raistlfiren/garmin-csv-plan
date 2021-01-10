@@ -74,7 +74,6 @@ class WorkoutCommand extends Command
         $handlerOptions = new HandlerOptions();
         $handlerOptions->setEmail($email);
         $handlerOptions->setPassword($password);
-        $handlerOptions->setPassword($password);
         $handlerOptions->setPrefix($prefix);
         $handlerOptions->setDryrun($dryrun);
         $handlerOptions->setDelete($delete||$deleteOnly);
