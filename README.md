@@ -23,6 +23,9 @@ Specify a CSV file to create and delete workouts in Garmin connect and schedule 
 
 ## Examples
 
+**You can remove the -m and -p flag by copying `.env` to `.env.local` AND updating the file with your username and password under 
+`GARMIN_USERNAME` and `GARMIN_PASSWORD`.**
+
 ```shell
 
 # Basic example of importing workouts into Garmin
