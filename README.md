@@ -77,8 +77,15 @@ or import **AND** schedule the workouts.
     
     b) Updating dependencies csn be done through `docker-compose run composer update`
 
-2)  Run the docker install by running `docker-compose up garmin-php` (This runs the docker container and keeps it up)
-3) Execute a command by running `docker-compose exec garmin-php bin/console garmin:workout ...`
+2) Run the docker install by running `docker-compose up garmin-dev` (This runs the docker container and keeps it up)
+3) Execute a command by running `docker-compose exec garmin-dev bin/console garmin:workout ...`
+
+## Running PHPUnit tests
+
+If you want to run PHPUnit tests, then you can easily run it through the dev build.
+
+1) Follow the above to develop and run the program through Docker.
+2) Run the following - `docker-compose exec garmin-dev vendor/bin/phpunit`
 
 ## Overriding Docker
 
