@@ -40,7 +40,7 @@ class WorkoutCommand extends Command
     protected function configure()
     {
         $this
-            ->setDescription('Parses and reads a CSV file')
+            ->setDescription('Parses and reads a CSV file into Garmin Connect')
             ->setHelp('This command allows you to parse out a CSV file')
             ->addArgument('csv', InputArgument::REQUIRED, 'CSV File provided to the command')
             ->addArgument('type', InputArgument::OPTIONAL, 'import|schedule command', 'import')
