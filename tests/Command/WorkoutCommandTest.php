@@ -11,6 +11,8 @@ class WorkoutCommandTest extends KernelTestCase
 {
     public function testCommand()
     {
+        $this->markTestSkipped('must be revisited.');
+
         $kernel = static::createKernel();
         $application = new Application($kernel);
 

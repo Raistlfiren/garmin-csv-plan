@@ -18,3 +18,7 @@ composer.lock
 
 #Remove docker override file
 docker-compose.override.yaml
+###> phpunit/phpunit ###
+/phpunit.xml
+.phpunit.result.cache
+###< phpunit/phpunit ###
