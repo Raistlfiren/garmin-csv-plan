@@ -42,10 +42,8 @@ class DistanceUnit
         switch($shortName) {
             case 'mpk':
                 return 'km';
-                break;
             case 'mpm':
                 return 'mi';
-                break;
         }
     }
 
@@ -54,10 +52,8 @@ class DistanceUnit
         switch($shortName) {
             case 'kph':
                 return 'km';
-                break;
             case 'mph':
                 return 'mi';
-                break;
         }
     }
 
