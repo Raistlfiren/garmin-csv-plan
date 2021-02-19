@@ -141,7 +141,10 @@ abstract class AbstractHandler implements HandlerInterface
                         $workout->setGarminID($workoutID);
                         $debugMessages[] = 'Workout - ' . $workoutName . ' was previously created on the Garmin website with the id ' . $workoutID;
                     }
-                    else {
+                    // no step but not created previously -> skipping
+                    elseif (! count($workout->getSteps()) > 0) {
+                        $debugMessages[] = 'Workout - ' . $workoutName . ' was skipped because it has no steps and was not created previously';
+                    } else {
                         $response = $this->client->createWorkout(json_encode($workout));
                         $workoutID = $response->workoutId;
                         $workoutSteps = $this->findWorkoutSteps($response->workoutSegments[0]);
