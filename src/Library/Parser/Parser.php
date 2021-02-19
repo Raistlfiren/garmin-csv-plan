@@ -61,7 +61,7 @@ class Parser
 
                 $week->addDay($entityDay);
 
-                $recordLines = preg_split("/((\r?\n)|(\r\n?))/", $record[$day]);
+                $recordLines = preg_split("/((\r?\n)|(\r\n?))/", trim($record[$day]));
                 $lineNumbers = count($recordLines);
                 $lineNumber = 0;
                 $workout = "";
@@ -80,12 +80,14 @@ class Parser
                             }
                             $workout = $recordLine . "\n";
                         }
+                        // existing
                         else {
                             $workout .= $recordLine . "\n";
-                            // last line
-                            if($lineNumber === $lineNumbers) {
-                                array_push($workoutArr, $workout);
-                            }
+                        }
+
+                        // last line
+                        if($lineNumber === $lineNumbers) {
+                            array_push($workoutArr, $workout);
                         }
                     }
                 }
@@ -189,6 +191,11 @@ class Parser
         $stepsText = $this->removeFirstLine($workoutText);
         //Read steps into array
         $steps = $this->parseSteps($stepsText);
+
+        //Empty array if not step
+        if (! is_array($steps)) {
+            $steps = [];
+        }
 
         return WorkoutFactory::build($workoutType, $workoutName, $steps);
     }
