@@ -1,5 +1,9 @@
 WEEK,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday,Estimated km,,Duration,Avg km,Miles
-1,,"running: 14k, 4x 1.6k @TMP
+1,"running: 3.5-4h run
+   - run: 225:00
+   - cooldown: lap-button","running: 3.5-4h run
+                              - run: 225:00
+                              - cooldown: lap-button","running: 14k, 4x 1.6k @TMP
 - warmup: 2km @z2;testing notes
 - repeat: 4
   - run: 1600m @ 5:00-4:30;testing here too

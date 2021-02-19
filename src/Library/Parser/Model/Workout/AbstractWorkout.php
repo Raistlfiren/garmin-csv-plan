@@ -194,4 +194,9 @@ abstract class AbstractWorkout implements \JsonSerializable
 
         return $output;
     }
+
+    public function __toString()
+    {
+        return $this->getName();
+    }
 }

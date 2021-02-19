@@ -115,7 +115,7 @@ abstract class AbstractHandler implements HandlerInterface
         return $workoutSteps;
     }
 
-    public function createWorkouts(HandlerOptions $handlerOptions, array $days)
+    public function createWorkouts(HandlerOptions $handlerOptions, array $workouts)
     {
         if ($handlerOptions->getDeleteOnly()) {
             return;
@@ -127,33 +127,31 @@ abstract class AbstractHandler implements HandlerInterface
 
         /** @var Day $day */
         $workoutList = [];
-        foreach ($days as $day) {
-            /** @var AbstractWorkout $workout */
-            foreach ($day->getWorkouts() as $workoutKey => $workout) {
-                $workoutID = '**********';
-                $workoutName = $workout->getName();
-                if ($handlerOptions->getDryrun()) {
-                    $debugMessages[] = 'Workout - ' . $workoutName . ' was created on the Garmin website with the id ' . $workoutID;
+        /** @var AbstractWorkout $workout */
+        foreach ($workouts as $workoutKey => $workout) {
+            $workoutID = '**********';
+            $workoutName = $workout->getName();
+            if ($handlerOptions->getDryrun()) {
+                $debugMessages[] = 'Workout - ' . $workoutName . ' was created on the Garmin website with the id ' . $workoutID;
+            }
+            else {
+                // same workout name already created?
+                if ($workoutID = array_search($workoutName, $workoutList, true)) {
+                    $workout->setGarminID($workoutID);
+                    $debugMessages[] = 'Workout - ' . $workoutName . ' was previously created on the Garmin website with the id ' . $workoutID;
                 }
                 else {
-                    // same workout name already created?
-                    if ($workoutID = array_search($workoutName, $workoutList, true)) {
-                        $workout->setGarminID($workoutID);
-                        $debugMessages[] = 'Workout - ' . $workoutName . ' was previously created on the Garmin website with the id ' . $workoutID;
+                    $response = $this->client->createWorkout(json_encode($workout));
+                    $workoutID = $response->workoutId;
+                    $workoutSteps = $this->findWorkoutSteps($response->workoutSegments[0]);
+                    $allSteps = $workout->getAllSteps([], $workout->getSteps());
+                    foreach ($workoutSteps as $index => $workoutStep) {
+                        $allSteps[$index]->setGarminID($workoutStep['id']);
                     }
-                    else {
-                        $response = $this->client->createWorkout(json_encode($workout));
-                        $workoutID = $response->workoutId;
-                        $workoutSteps = $this->findWorkoutSteps($response->workoutSegments[0]);
-                        $allSteps = $workout->getAllSteps([], $workout->getSteps());
-                        foreach ($workoutSteps as $index => $workoutStep) {
-                            $allSteps[$index]->setGarminID($workoutStep['id']);
-                        }
-                        $workout->setGarminID($response->workoutId);
-                        $workoutList[$response->workoutId] = $workoutName;
-                        $debugMessages[] = 'Workout - ' . $workoutName . ' was created on the Garmin website with the id ' . $workoutID;
-                        $day->updateWorkout($workoutKey, $workout);
-                    }
+                    $workout->setGarminID($response->workoutId);
+                    $workoutList[$response->workoutId] = $workoutName;
+                    $debugMessages[] = 'Workout - ' . $workoutName . ' was created on the Garmin website with the id ' . $workoutID;
+                    $day->updateWorkout($workoutKey, $workout);
                 }
             }
         }
@@ -266,7 +264,9 @@ abstract class AbstractHandler implements HandlerInterface
     {
         $event = new HandlerEvent($handlerOptions);
         $this->dispatcher->dispatch($event, HandlerEvents::PARSING_WORKOUTS_STARTED);
-        $period = $this->parser->parse($startDate, $handlerOptions->getPrefix());
+
+        $workouts = $this->parser->findAllWorkouts();
+
         $debugMessages = $this->parser->getDebugMessages();
         $event->setDebugMessages($debugMessages);
         $this->dispatcher->dispatch($event, HandlerEvents::PARSING_WORKOUTS_ENDED);
@@ -275,6 +275,24 @@ abstract class AbstractHandler implements HandlerInterface
             return null;
         }
 
-        return $period;
+        return $workouts;
+    }
+
+    /**
+     * @return GarminConnect
+     */
+    public function getClient(): GarminConnect
+    {
+        return $this->client;
+    }
+
+    /**
+     * @param GarminConnect $client
+     * @return AbstractHandler
+     */
+    public function setClient(GarminConnect $client): AbstractHandler
+    {
+        $this->client = $client;
+        return $this;
     }
 }

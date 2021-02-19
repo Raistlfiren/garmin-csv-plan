@@ -14,38 +14,80 @@ class Parser
     /** @var Reader $csv */
     protected $csv;
 
+    protected $records;
+
     protected $debugMessages = [];
 
+    /**
+     * @param $path
+     * @return bool
+     */
     public function isValidFile($path)
     {
         $addToPath = [DIRECTORY_SEPARATOR, '..', DIRECTORY_SEPARATOR, '..', DIRECTORY_SEPARATOR, '..', DIRECTORY_SEPARATOR];
         $fullPath = __DIR__ . implode('', $addToPath) . $path;
         if (file_exists($fullPath)) {
-            $this->csv = Reader::createFromPath($fullPath, 'r');
+            $csv = Reader::createFromPath($fullPath, 'r');
+            $csv->setHeaderOffset(0);
+            $csv->skipEmptyRecords();
+            $this->records = $csv->getRecords();
             return true;
         }
 
         return false;
     }
 
+    /**
+     * @return mixed
+     */
+    public function getRecords()
+    {
+        return $this->records;
+    }
+
     public function getTotalWeeks()
     {
-        $this->csv->setHeaderOffset(0);
-        $this->csv->skipEmptyRecords();
-        return count($this->csv);
+        return count($this->records);
+    }
+
+    /**
+     * @return array
+     */
+    public function findAllWorkouts()
+    {
+        $workouts = [];
+
+        foreach ($this->records as $row) {
+            foreach ($row as $data) {
+                //Append newline to end
+                $data .= "\n";
+                //Try to parse workout
+                $workout = $this->parseWorkout($data);
+                if ($workout) {
+                    //Workout must have been made
+                    $name = $workout->getName();
+                    $workout->setName($name);
+                    $workouts[] = $workout;
+                }
+            }
+        }
+
+        $workouts = array_unique($workouts);
+
+        foreach ($workouts as $workout) {
+            $this->debugMessages[] .= (empty($workout->getName()) ? 'Workout parsed.' : $workout->getName());
+        }
+
+        return array_unique($workouts);
     }
 
     public function parse(DateTime $startDate = null, $prefix = null)
     {
-        $this->csv->setHeaderOffset(0);
-        $this->csv->skipEmptyRecords();
-        $records = $this->csv->getRecords();
-
         $period = new PeriodCollection();
         $debugCounter = 0;
 
         $days = Day::WEEK;
-        foreach ($records as $record) {
+        foreach ($this->records as $record) {
             $week = new WeekCollection();
             foreach ($days as $day) {
                 $entityDay = new Day();

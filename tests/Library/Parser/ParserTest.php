@@ -8,6 +8,45 @@ use PHPUnit\Framework\TestCase;
 
 class ParserTest extends TestCase {
 
+    public function testIsValidFile()
+    {
+        $filePath = 'tests/Resource/test.csv';
+        $parser = new Parser();
+
+        $this->assertTrue($parser->isValidFile($filePath), 'File not found and is invalid');
+    }
+
+    public function testFailIsValidFile()
+    {
+        $filePath = 'tests/Resource/testasssss.csv';
+        $parser = new Parser();
+
+        $this->assertFalse($parser->isValidFile($filePath), 'File valid when it shouldn\'t be.');
+    }
+
+    /**
+     * @dataProvider filePathsDataProvider
+     */
+    public function testGetRecords($filePath, $expected)
+    {
+        $parser = new Parser();
+        $parser->isValidFile($filePath);
+
+        $this->assertEquals(iterator_count($parser->getRecords()), $expected, 'Invalid record count from get records');
+    }
+
+    /**
+     * @dataProvider filePathsWorkoutsDataProvider
+     */
+    public function testfindAllWorkouts($filePath, $workoutsCount)
+    {
+        $parser = new Parser();
+        $parser->isValidFile($filePath);
+        $workouts = $parser->findAllWorkouts();
+
+        $this->assertEquals(count($workouts), $workoutsCount, 'Not enough workouts found or too many...');
+    }
+
     /**
      * @dataProvider workoutTypeProvider
      */
@@ -51,6 +90,22 @@ class ParserTest extends TestCase {
             $this->assertIsArray($actual, 'REGEX not working properly on parsing steps.');
             $this->assertCount($expected, $actual, 'REGEX not working properly on parsing steps.');
         }
+    }
+
+    public function filePathsDataProvider()
+    {
+        return [
+            ['tests/Resource/test.csv', 1],
+            ['tests/Resource/ultra-80k-runnersworld.csv', 20]
+        ];
+    }
+
+    public function filePathsWorkoutsDataProvider()
+    {
+        return [
+            ['tests/Resource/test.csv', 2],
+            ['tests/Resource/ultra-80k-runnersworld.csv', 26]
+        ];
     }
 
     public function workoutTypeProvider()

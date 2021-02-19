@@ -9,8 +9,8 @@ class ImportHandler extends AbstractHandler
 {
     public function handle(HandlerOptions $handlerOptions)
     {
-        $this->overrideClientCredentials($handlerOptions->getEmail(), $handlerOptions->getPassword());
         $this->validateFile($handlerOptions);
+//        $workouts = $this->parser->findAllWorkouts();
 //        $event = new HandlerEvent($handlerOptions);
 //        $this->dispatcher->dispatch($event, HandlerEvents::FILE_VALIDATION_STARTED);
 //
@@ -26,14 +26,16 @@ class ImportHandler extends AbstractHandler
 //        $event->setDebugMessages($debugMessages);
 //        $this->dispatcher->dispatch($event, HandlerEvents::PARSING_WORKOUTS_ENDED);
 
-        $period = $this->parseWorkouts($handlerOptions);
+        $workouts = $this->parseWorkouts($handlerOptions);
 
-        if ($period === null) {
-            return;
-        }
+//        if ($period === null) {
+//            return;
+//        }
+//
+//        $workouts = $period->getWorkouts();
+//        $days = $period->getDays();
+        $this->overrideClientCredentials($handlerOptions->getEmail(), $handlerOptions->getPassword());
 
-        $workouts = $period->getWorkouts();
-        $days = $period->getDays();
         $this->deleteWorkouts($handlerOptions, $workouts);
 
 //        if ($handlerOptions->getDelete()) {
@@ -43,9 +45,9 @@ class ImportHandler extends AbstractHandler
 //        $event->setDebugMessages($debugMessages);
 //        $this->dispatcher->dispatch($event, HandlerEvents::DELETE_WORKOUTS_ENDED);
 
-        $this->createWorkouts($handlerOptions, $days);
+//        $this->createWorkouts($handlerOptions, $days);
 
-        $this->attachNotes($handlerOptions, $period);
+//        $this->attachNotes($handlerOptions, $period);
 
 //        $event->setDebugMessages($debugMessages);
 //        $this->dispatcher->dispatch($event, HandlerEvents::CREATED_WORKOUTS_ENDED);
