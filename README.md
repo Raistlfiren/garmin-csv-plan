@@ -71,11 +71,12 @@ or import **AND** schedule the workouts.
 `--end`, `-d` - Specify the end date of when you want scheduled workouts to be planned on your calendar in Garmin
 
 ## Developing and running the program through Docker
-1) Install dependencies - `docker-compose run composer install`
+1) Start by building and running the docker file - `docker-compose up garmin-dev`
+1) Install dependencies - `docker-compose exec garmin-dev composer install`
    
-    a) Adding dependencies or removing dependencies can be done through `docker-compose run composer require <package>`
+    a) Adding dependencies or removing dependencies can be done through `docker-compose exec garmin-dev composer require <package>`
     
-    b) Updating dependencies csn be done through `docker-compose run composer update`
+    b) Updating dependencies csn be done through `docker-compose exec garmin-dev composer update`
 
 2) Run the docker install by running `docker-compose up garmin-dev` (This runs the docker container and keeps it up)
 3) Execute a command by running `docker-compose exec garmin-dev bin/console garmin:workout ...`
