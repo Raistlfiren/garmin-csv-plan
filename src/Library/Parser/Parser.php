@@ -33,7 +33,14 @@ class Parser
     {
         $this->csv->setHeaderOffset(0);
         $this->csv->skipEmptyRecords();
-        return count($this->csv);
+        $records = $this->csv->getRecords();
+        $numberOfWeek = 0; 
+        foreach ($records as $record) {
+            if (is_numeric($record['WEEK'])) {
+                $numberOfWeek++;
+            }
+        }
+        return $numberOfWeek;
     }
 
     public function parse(DateTime $startDate = null, $prefix = null)
@@ -47,71 +54,73 @@ class Parser
 
         $days = Day::WEEK;
         foreach ($records as $record) {
-            $week = new WeekCollection();
-            foreach ($days as $day) {
-                $entityDay = new Day();
-                $this->debugMessages[$debugCounter] = '';
+            if (is_numeric($record['WEEK'])) {
+                $week = new WeekCollection();
+                foreach ($days as $day) {
+                    $entityDay = new Day();
+                    $this->debugMessages[$debugCounter] = '';
 
-                if ($startDate) {
-                    $entityDay->setDate(clone $startDate);
-                    $this->debugMessages[$debugCounter] = $startDate->format('Y-m-d') . ' - ';
-                    //Increment date by 1...
-                    $startDate->modify('+1 day');
-                }
+                    if ($startDate) {
+                        $entityDay->setDate(clone $startDate);
+                        $this->debugMessages[$debugCounter] = $startDate->format('Y-m-d') . ' - ';
+                        //Increment date by 1...
+                        $startDate->modify('+1 day');
+                    }
 
-                $week->addDay($entityDay);
+                    $week->addDay($entityDay);
 
-                $recordLines = preg_split("/((\r?\n)|(\r\n?))/", trim($record[$day]));
-                $lineNumbers = count($recordLines);
-                $lineNumber = 0;
-                $workout = "";
-                $workoutArr = array();
-                foreach ($recordLines as $recordLine) {
-                    $lineNumber++;
-                    if (! empty($recordLine)) {
-                        $regex = '/^(' . implode('|',WorkoutTypes::WORKOUTS) . ')?:/';
-                        $result = preg_match($regex, $recordLine, $workoutType);
+                    $recordLines = preg_split("/((\r?\n)|(\r\n?))/", trim($record[$day]));
+                    $lineNumbers = count($recordLines);
+                    $lineNumber = 0;
+                    $workout = "";
+                    $workoutArr = array();
+                    foreach ($recordLines as $recordLine) {
+                        $lineNumber++;
+                        if (! empty($recordLine)) {
+                            $regex = '/^(' . implode('|',WorkoutTypes::WORKOUTS) . ')?:/';
+                            $result = preg_match($regex, $recordLine, $workoutType);
 
-                        // new workout
-                        if ($result && isset($workoutType[1]) && ! empty($workoutType[1])) {
-                            // push previous workout to array
-                            if ($workout != "") {
+                            // new workout
+                            if ($result && isset($workoutType[1]) && ! empty($workoutType[1])) {
+                                // push previous workout to array
+                                if ($workout != "") {
+                                    array_push($workoutArr, $workout);
+                                }
+                                $workout = $recordLine . "\n";
+                            }
+                            // existing
+                            else {
+                                $workout .= $recordLine . "\n";
+                            }
+
+                            // last line
+                            if($lineNumber === $lineNumbers) {
                                 array_push($workoutArr, $workout);
                             }
-                            $workout = $recordLine . "\n";
                         }
-                        // existing
-                        else {
-                            $workout .= $recordLine . "\n";
-                        }
+                    }
 
-                        // last line
-                        if($lineNumber === $lineNumbers) {
-                            array_push($workoutArr, $workout);
+                    $workoutNumbers = count($workoutArr);
+                    $workoutNumber = 0;
+                    foreach ($workoutArr as $workout) {
+                        $workoutNumber++;
+                        $workout = $this->parseWorkout($workout);
+                        $name = $prefix . $workout->getName();
+                        $workout->setName($name);
+                        if ($workoutNumbers > 1) {
+                            $this->debugMessages[$debugCounter] .= $workoutNumber . ". ";
                         }
+                        $this->debugMessages[$debugCounter] .= (empty($workout->getName()) ? 'Workout parsed.' : $workout->getName());
+                        if ($workoutNumbers > 1 && $workoutNumber < $workoutNumbers) {
+                            $this->debugMessages[$debugCounter] .= "  -  ";
+                        }
+                        $entityDay->addWorkout($workout);
+                        
                     }
+                    $debugCounter++;
                 }
-
-                $workoutNumbers = count($workoutArr);
-                $workoutNumber = 0;
-                foreach ($workoutArr as $workout) {
-                    $workoutNumber++;
-                    $workout = $this->parseWorkout($workout);
-                    $name = $prefix . $workout->getName();
-                    $workout->setName($name);
-                    if ($workoutNumbers > 1) {
-                        $this->debugMessages[$debugCounter] .= $workoutNumber . ". ";
-                    }
-                    $this->debugMessages[$debugCounter] .= (empty($workout->getName()) ? 'Workout parsed.' : $workout->getName());
-                    if ($workoutNumbers > 1 && $workoutNumber < $workoutNumbers) {
-                        $this->debugMessages[$debugCounter] .= "  -  ";
-                    }
-                    $entityDay->addWorkout($workout);
-                    
-                }
-                $debugCounter++;
+                $period->addWeek($week);
             }
-            $period->addWeek($week);
         }
 
         return $period;
@@ -185,6 +194,11 @@ class Parser
     {
         //Read first line
         $workoutType = $this->parseWorkoutType($workoutText);
+        //Default workout to 'running' (necessary to parse 'ultra-80k-runnersworld.csv' properly)
+        if (is_null($workoutType)) {
+            $workoutType = 'running';
+            $workoutText = $workoutType . ': ' . $workoutText;
+        }
         $workoutName = $this->parseWorkoutName($workoutText);
 
         //Remove first line
