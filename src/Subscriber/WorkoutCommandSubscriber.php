@@ -1,11 +1,13 @@
 <?php
 
-namespace App\Library\Handler\Event;
+namespace App\Subscriber;
 
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use App\Library\Handler\Event\HandlerEvents;
+use App\Library\Handler\Event\HandlerEvent;
 
-class CommandSubscriber implements EventSubscriberInterface
+class WorkoutCommandSubscriber implements EventSubscriberInterface
 {
     /**
      * @var SymfonyStyle
