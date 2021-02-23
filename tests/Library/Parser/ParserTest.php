@@ -79,10 +79,9 @@ class ParserTest extends TestCase {
      */
     public function testParseSteps($data, $expected)
     {
-        $this->markTestSkipped('must be revisited.');
         $parser = new Parser();
-        $parser->removeFirstLine($data);
-        $actual = $parser->parseSteps($data);
+        $stepsText = $parser->removeFirstLine($data);
+        $actual = $parser->parseSteps($stepsText);
 
         if ($expected === null) {
             $this->assertSame($expected, $actual, 'REGEX not working properly on parsing steps.');
