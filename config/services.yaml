@@ -37,6 +37,6 @@ services:
     App\Library\Handler\HandlerFactory:
         arguments:
             - !tagged_iterator app.handler
-    App\Library\Handler\Event\CommandSubscriber:
+    App\Subscriber\WorkoutCommandSubscriber:
         autowire: false
         autoconfigure: false
