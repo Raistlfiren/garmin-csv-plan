@@ -20,7 +20,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Docker Build and Up
-        run: docker-compose up garmin-dev -d
+        run: docker-compose up -d garmin-dev
 
       - name: Composer install
         run: docker-compose exec garmin-dev composer install
