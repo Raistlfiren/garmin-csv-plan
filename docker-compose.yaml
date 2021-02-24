@@ -15,5 +15,6 @@ services:
       - ./docker/dev/php.ini:/usr/local/etc/php/conf.d/custom.ini
     environment:
       XDEBUG_CONFIG: "client_host=host.docker.internal"
+      XDEBUG_MODE: "coverage"
       PHP_IDE_CONFIG: serverName=garmin-dev # This needs to be in under PHP -> Servers -> Name (Set to garmin)
     tty: true
