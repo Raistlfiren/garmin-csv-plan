@@ -1,0 +1,29 @@
+name: Full CI process for Symfony 5
+on:
+  push:
+    branches:
+      - testing
+jobs:
+  symfony:
+    name: Symfony 5.2 (PHP ${{ matrix.php-versions }})
+    # https://hub.docker.com/_/ubuntu/
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      matrix:
+        php-versions: ['7.4']
+    steps:
+
+      # —— Setup Github actions 🐙 —————————————————————————————————————————————
+      # https://github.com/actions/checkout (official)
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Docker Build and Up
+        run: docker-compose up garmin-dev
+
+      - name: Composer install
+        run: docker-compose exec garmin-dev composer install
+
+      - name: Run PHPUnit Tests
+        run: docker-compose exec garmin-dev vendor/bin/phpunit
