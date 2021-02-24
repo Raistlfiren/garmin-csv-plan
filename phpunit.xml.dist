@@ -5,6 +5,9 @@
     <include>
       <directory suffix=".php">src</directory>
     </include>
+    <report>
+      <html outputDirectory="tests/coverage-report" />
+    </report>
   </coverage>
   <php>
     <ini name="error_reporting" value="-1"/>
