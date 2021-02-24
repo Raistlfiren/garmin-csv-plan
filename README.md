@@ -1,6 +1,6 @@
 # Garmin Plan
 
-[![Actions Status](https://github.com/Raistlfiren/garmin-csv-plan/workflows/symfony/badge.svg)](https://github.com/Raistlfiren/garmin-csv-plan/actions)
+[![Actions Status](https://github.com/Raistlfiren/garmin-csv-plan/workflows/CI/badge.svg)](https://github.com/Raistlfiren/garmin-csv-plan/actions)
 
 This is a PHP implementation of the great program that mgifos created [here](https://github.com/mgifos/quick-plan). 
 The intentions of the program is to parse a CSV file and create workouts in Garmin Connect.
