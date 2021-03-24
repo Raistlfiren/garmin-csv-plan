@@ -33,27 +33,48 @@ abstract class AbstractWorkout implements \JsonSerializable
     public function steps($steps)
     {
         $repeaterStep = null;
+        $repStep = [];
 
         foreach ($steps as $index => $step) {
-            $repeater = $this->isRepeaterStep($step);
+            $whiteSpaceCount = $this->calculateWhiteSpace($step);
             $header = $this->parseStepHeader($step);
             $parameters = $this->parseStepDetails($step);
             $notes = $this->parseStepNotes($step);
-            if ($header === 'repeat') {
-                $repeaterStep = new RepeaterStep($parameters, $index);
-                $this->steps->add($repeaterStep);
+
+            $stepFactory = StepFactory::build($header, $parameters, $notes, $index);
+
+            if ($stepFactory instanceof RepeaterStep) {
+                //Store it into array with the index being whitespace to reference children steps later
+                $repStep[($whiteSpaceCount+2)] = $stepFactory;
+            }
+
+            if (isset($repStep[$whiteSpaceCount])) {
+                //Add step to repeater
+                $repStep[$whiteSpaceCount]->addStep($stepFactory);
             } else {
-                if ($repeater && $repeaterStep) {
-                    $stepFactory = StepFactory::build($header, $parameters, $notes, $index);
-                    $repeaterStep->addStep($stepFactory);
-                } else {
-                    $stepFactory = StepFactory::build($header, $parameters, $notes, $index);
-                    $this->steps->add($stepFactory);
-                }
+                //Store the step into the workout
+                $this->steps->add($stepFactory);
             }
         }
 
         return $this;
+    }
+
+    public function parseStepResult($whitespaceCount, $repeater, $header, $parameters, $notes, $index)
+    {
+        if ($header === 'repeat') {
+            $repeaterStep = new RepeaterStep($parameters, $index);
+            $this->steps->add($repeaterStep);
+        }
+    }
+
+    public function calculateWhiteSpace($stepText)
+    {
+        $regex = '/.+?(?=-)/';
+
+        $result = preg_match($regex, $stepText, $whiteText);
+
+        return $result && isset($whiteText[0]) ? strlen($whiteText[0]) : 0;
     }
 
     public function isRepeaterStep($stepText)
