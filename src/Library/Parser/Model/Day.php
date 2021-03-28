@@ -2,8 +2,8 @@
 
 namespace App\Library\Parser\Model;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use DateTime;
+use Doctrine\Common\Collections\ArrayCollection;
 
 class Day
 {
