@@ -5,9 +5,9 @@ namespace App\Tests\Library\Handler;
 
 
 use App\Library\Handler\AbstractHandler;
-use App\Library\Handler\Event\HandlerEvents;
 use App\Library\Handler\HandlerOptions;
 use App\Library\Parser\Parser;
+use App\Service\GarminHelper;
 use dawguk\GarminConnect;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -18,6 +18,7 @@ class AbstractHandlerTest extends TestCase
     protected $handler;
     protected $client;
     protected $eventDispatcher;
+    protected $garminHelper;
 
     public function setUp(): void
     {
@@ -37,7 +38,8 @@ class AbstractHandlerTest extends TestCase
 
         $parser = new Parser();
         $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
-        $this->handler = $this->getMockForAbstractClass(AbstractHandler::class, [$parser, $this->eventDispatcher, 'john', 'doe']);
+        $this->garminHelper = $this->createMock(GarminHelper::class);
+        $this->handler = $this->getMockForAbstractClass(AbstractHandler::class, [$parser, $this->eventDispatcher, $this->garminHelper]);
         $this->client = $this->createPartialMock(GarminConnect::class, ['getWorkoutList']);
     }
 
