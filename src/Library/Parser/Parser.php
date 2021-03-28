@@ -30,7 +30,7 @@ class Parser
             $csv = Reader::createFromPath($fullPath, 'r');
             $csv->setHeaderOffset(0);
             $csv->skipEmptyRecords();
-            $this->records = $csv->getRecords();
+            $this->records = $csv;
             return true;
         }
 
