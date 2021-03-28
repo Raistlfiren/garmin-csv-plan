@@ -2,7 +2,7 @@ name: CI
 on:
   push:
     branches:
-      - testing
+      - master
 jobs:
   symfony:
     name: Symfony 5.2 (PHP ${{ matrix.php-versions }})
