@@ -66,6 +66,7 @@ class Parser
                 if ($workout) {
                     //Workout must have been made
                     $name = $workout->getName();
+                    $workout->setPrefix($prefix);
                     $workout->setName($name);
                     $workouts[] = $workout;
                 }
