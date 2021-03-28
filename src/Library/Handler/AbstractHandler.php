@@ -5,15 +5,9 @@ namespace App\Library\Handler;
 use App\Library\Garmin\Client;
 use App\Library\Handler\Event\HandlerEvent;
 use App\Library\Handler\Event\HandlerEvents;
-use App\Library\Parser\Model\Day;
-use App\Library\Parser\Model\PeriodCollection;
-use App\Library\Parser\Model\Workout\AbstractWorkout;
-use App\Library\Parser\Model\Workout\WorkoutFactory;
 use App\Library\Parser\Parser;
+use App\Service\GarminHelper;
 use dawguk\GarminConnect;
-use Symfony\Component\Console\Style\OutputStyle;
-use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 abstract class AbstractHandler implements HandlerInterface
@@ -52,207 +46,50 @@ abstract class AbstractHandler implements HandlerInterface
      */
     protected $dispatcher;
 
-    /**
-     * @var string
-     */
-    protected $garminUsername;
+    protected $garminHelper;
 
-    /**
-     * @var string
-     */
-    protected $garminPassword;
+    protected $workouts;
 
-    public function __construct(Parser $parser, EventDispatcherInterface $eventDispatcher, $garminUsername, $garminPassword)
-    {
+    public function __construct(
+        Parser $parser,
+        EventDispatcherInterface $eventDispatcher,
+        GarminHelper $garminHelper
+    ) {
         $this->parser = $parser;
         $this->dispatcher = $eventDispatcher;
-        $this->garminUsername = $garminUsername;
-        $this->garminPassword = $garminPassword;
+        $this->garminHelper = $garminHelper;
     }
 
-    abstract public function handle(HandlerOptions $handlerOptions);
-
-    public function overrideClientCredentials($username, $password)
+    public function handle(HandlerOptions $handlerOptions)
     {
-        $credentials = [
-            'username' => $username,
-            'password' => $password,
-        ];
+        // Validate the CSV file
+        $this->validateFile($handlerOptions);
 
-        if (empty($username) && empty($password)) {
-            $credentials = [
-                'username' => $this->garminUsername,
-                'password' => $this->garminPassword,
-            ];
-        }
+        // Find all workouts and return an array
+        $workouts = $this->parseWorkouts($handlerOptions);
 
-        $this->client = new GarminConnect($credentials);
-    }
+        // Put the workouts in a variable to do something with them later
+        $this->setWorkouts($workouts);
 
-    public function getWorkoutNames(array $workouts)
-    {
-        $workoutNames = [];
+        // See if we should send it to Garmin or not
+        if (! $handlerOptions->getDryrun()) {
+            // Create a new instance of Garmin client based upon .env or specified username/password
+            $this->authenticatingToGarmin($handlerOptions);
 
-        /** @var AbstractWorkout $workout */
-        foreach ($workouts as $workout) {
-            $workoutNames[] = $workout->getName();
-        }
-
-        return $workoutNames;
-    }
-
-    public function findWorkoutSteps($steps, $workoutSteps = [])
-    {
-        foreach ($steps->workoutSteps as $step) {
-            if ($step->type === 'ExecutableStepDTO'){
-                $workoutSteps[] = ['type' => 'ExecutableStepDTO', 'id' => $step->stepId];
-            } else if ($step->type === 'RepeatGroupDTO') {
-                $workoutSteps[] = ['type' => 'RepeatGroupDTO', 'id' => $step->stepId];
-                $workoutSteps = $this->findWorkoutSteps($step, $workoutSteps);
+            // Check to see if we should delete workouts
+            if ($handlerOptions->getDelete()) {
+                // Delete workouts in Garmin
+                $this->deleteGarminWorkouts($handlerOptions, $workouts);
             }
-        }
 
-        return $workoutSteps;
-    }
-
-    public function createWorkouts(HandlerOptions $handlerOptions, array $days)
-    {
-        if ($handlerOptions->getDeleteOnly()) {
-            return;
-        }
-
-        $debugMessages = [];
-        $event = new HandlerEvent($handlerOptions);
-        $this->dispatcher->dispatch($event, HandlerEvents::CREATED_WORKOUTS_STARTED);
-
-        /** @var Day $day */
-        $workoutList = [];
-        foreach ($days as $day) {
-            /** @var AbstractWorkout $workout */
-            foreach ($day->getWorkouts() as $workoutKey => $workout) {
-                $workoutID = '**********';
-                $workoutName = $workout->getName();
-                if ($handlerOptions->getDryrun()) {
-                    $debugMessages[] = 'Workout - ' . $workoutName . ' was created on the Garmin website with the id ' . $workoutID;
-                }
-                else {
-                    // same workout name already created?
-                    if ($workoutID = array_search($workoutName, $workoutList, true)) {
-                        $workout->setGarminID($workoutID);
-                        $debugMessages[] = 'Workout - ' . $workoutName . ' was previously created on the Garmin website with the id ' . $workoutID;
-                    }
-                    else {
-                        $response = $this->client->createWorkout(json_encode($workout));
-                        $workoutID = $response->workoutId;
-                        $workoutSteps = $this->findWorkoutSteps($response->workoutSegments[0]);
-                        $allSteps = $workout->getAllSteps([], $workout->getSteps());
-                        foreach ($workoutSteps as $index => $workoutStep) {
-                            $allSteps[$index]->setGarminID($workoutStep['id']);
-                        }
-                        $workout->setGarminID($response->workoutId);
-                        $workoutList[$response->workoutId] = $workoutName;
-                        $debugMessages[] = 'Workout - ' . $workoutName . ' was created on the Garmin website with the id ' . $workoutID;
-                        $day->updateWorkout($workoutKey, $workout);
-                    }
-                }
+            // Check to see if we only want to delete workouts or not
+            if (! $handlerOptions->getDeleteOnly()) {
+                // Create workouts in Garmin
+                $this->createGarminWorkouts($handlerOptions, $workouts);
             }
-        }
 
-        $event->setDebugMessages($debugMessages);
-        $this->dispatcher->dispatch($event, HandlerEvents::CREATED_WORKOUTS_ENDED);
-    }
-
-    public function deleteWorkouts(HandlerOptions $handlerOptions, array $workouts)
-    {
-        if (! $handlerOptions->getDelete()) {
-            return;
-        }
-
-        $event = new HandlerEvent($handlerOptions);
-        $this->dispatcher->dispatch($event, HandlerEvents::DELETE_WORKOUTS_STARTED);
-
-        $debugMessages = [];
-
-        $workoutNames = $this->getWorkoutNames($workouts);
-
-        $workoutList = [];
-
-        //Grab all workouts from Garmin API
-        $workouts = $this->client->getWorkoutList(0, 9999);
-
-        //Store them in an array
-        foreach ($workouts as $workout) {
-            $workoutList[$workout->workoutId] = $workout->workoutName;
-        }
-
-        //Loop through workout names and delete them from Garmin
-        foreach ($workoutNames as $workoutName) {
-            while ($workoutKey = array_search($workoutName, $workoutList, true)) {
-                if (! $handlerOptions->getDryrun()) {
-                    $this->client->deleteWorkout($workoutKey);
-                }
-                unset($workoutList[$workoutKey]);
-                $debugMessages[] = 'Workout - ' . $workoutName . ' with id ' . $workoutKey . ' was deleted from the Garmin website.';
-            }
-        }
-
-        $event->setDebugMessages($debugMessages);
-        $this->dispatcher->dispatch($event, HandlerEvents::DELETE_WORKOUTS_ENDED);
-    }
-
-    public function attachNotes(HandlerOptions $handlerOptions, PeriodCollection $period)
-    {
-        if ($handlerOptions->getDeleteOnly()) {
-            return;
-        }
-        
-        $steps = $period->getStepsWithNotes();
-
-        //Loop through steps and add their notes
-        foreach ($steps as $step) {
-            if (! $handlerOptions->getDryrun()) {
-                // if the step has no GarminID, it means the same workout was already created
-                if ($stepID = $step->getGarminID()) {
-                    $this->client->createStepNote($stepID, $step->getNotes(), $step->getWorkout()->getGarminID());
-                }
-            }
         }
     }
-//
-//    public function importProcess(string $path, string $email, string $password, bool $delete)
-//    {
-//        $this->getLogger()->section('Validating and accessing - ' . $path);
-//
-//        $this->parser->isValidFile($path);
-//
-//        $this->getLogger()->success('File valid.');
-//        $this->getLogger()->section('Parsing workouts:');
-//
-//        $period = $this->parser->parse();
-//
-//        $this->getLogger()->listing($this->parser->getDebugMessages());
-//
-//        $answer = $this->getLogger()->confirm('Does the following look correct?', true);
-//
-//        if (! $answer) {
-//            $this->getLogger()->note('Stopping import process.');
-//            return;
-//        }
-//
-//        $workouts = $period->getWorkouts();
-//        $days = $period->getDays();
-//        $debugMessages = $this->deleteWorkouts($workouts, $delete);
-//
-//        $this->getLogger()->listing($debugMessages);
-//        $this->getLogger()->section('Creating workouts');
-//
-//        $debugMessages = $this->createWorkouts($days);
-//
-//        $this->getLogger()->listing($debugMessages);
-//        $this->getLogger()->success('Workout import was successful.');
-//
-//        return $period;
-//    }
 
     public function validateFile(HandlerOptions $handlerOptions)
     {
@@ -262,11 +99,14 @@ abstract class AbstractHandler implements HandlerInterface
         $this->dispatcher->dispatch($event, HandlerEvents::FILE_VALIDATION_ENDED);
     }
 
-    public function parseWorkouts(HandlerOptions $handlerOptions, \DateTime $startDate = null)
+    public function parseWorkouts(HandlerOptions $handlerOptions)
     {
         $event = new HandlerEvent($handlerOptions);
         $this->dispatcher->dispatch($event, HandlerEvents::PARSING_WORKOUTS_STARTED);
-        $period = $this->parser->parse($startDate, $handlerOptions->getPrefix());
+
+        $prefix = $handlerOptions->getPrefix();
+        $workouts = $this->parser->findAllWorkouts($prefix);
+
         $debugMessages = $this->parser->getDebugMessages();
         $event->setDebugMessages($debugMessages);
         $this->dispatcher->dispatch($event, HandlerEvents::PARSING_WORKOUTS_ENDED);
@@ -275,6 +115,61 @@ abstract class AbstractHandler implements HandlerInterface
             return null;
         }
 
-        return $period;
+        return $workouts;
+    }
+
+    public function authenticatingToGarmin(HandlerOptions $handlerOptions)
+    {
+        $event = new HandlerEvent($handlerOptions);
+        $this->dispatcher->dispatch($event, HandlerEvents::AUTHENTICATE_GARMIN_STARTED);
+
+        $this->garminHelper->createGarminClient($handlerOptions->getEmail(), $handlerOptions->getPassword());
+
+        $this->dispatcher->dispatch($event, HandlerEvents::AUTHENTICATE_GARMIN_ENDED);
+    }
+
+    public function createGarminWorkouts($handlerOptions, $workouts)
+    {
+        $event = new HandlerEvent($handlerOptions);
+        $this->dispatcher->dispatch($event, HandlerEvents::CREATED_WORKOUTS_STARTED);
+
+        $this->garminHelper->createWorkouts($workouts);
+        $this->garminHelper->attachNotes($workouts);
+
+        $debugMessages = $this->garminHelper->getDebugMessages();
+
+        $event->setDebugMessages($debugMessages);
+        $this->dispatcher->dispatch($event, HandlerEvents::CREATED_WORKOUTS_ENDED);
+    }
+
+    public function deleteGarminWorkouts($handlerOptions, $workouts)
+    {
+        $event = new HandlerEvent($handlerOptions);
+        $this->dispatcher->dispatch($event, HandlerEvents::DELETE_WORKOUTS_STARTED);
+
+        $this->garminHelper->deleteWorkouts($workouts);
+
+        $debugMessages = $this->garminHelper->getDebugMessages();
+
+        $event->setDebugMessages($debugMessages);
+        $this->dispatcher->dispatch($event, HandlerEvents::DELETE_WORKOUTS_ENDED);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getWorkouts()
+    {
+        return $this->workouts;
+    }
+
+    /**
+     * @param mixed $workouts
+     * @return AbstractHandler
+     */
+    public function setWorkouts($workouts)
+    {
+        $this->workouts = $workouts;
+        return $this;
     }
 }

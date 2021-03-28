@@ -25,6 +25,7 @@ class StepFactory
                 return new RestStep($parameters, $notes, $order);
                 break;
             case 'repeat':
+                return new RepeaterStep($parameters, $order);
                 break;
             default:
                 break;

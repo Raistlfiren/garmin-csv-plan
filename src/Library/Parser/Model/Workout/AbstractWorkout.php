@@ -20,6 +20,11 @@ abstract class AbstractWorkout implements \JsonSerializable
     protected $name;
 
     /**
+     * @var string|null
+     */
+    protected $prefix;
+
+    /**
      * @var integer|null
      */
     protected $garminID;
@@ -33,27 +38,48 @@ abstract class AbstractWorkout implements \JsonSerializable
     public function steps($steps)
     {
         $repeaterStep = null;
+        $repStep = [];
 
         foreach ($steps as $index => $step) {
-            $repeater = $this->isRepeaterStep($step);
+            $whiteSpaceCount = $this->calculateWhiteSpace($step);
             $header = $this->parseStepHeader($step);
             $parameters = $this->parseStepDetails($step);
             $notes = $this->parseStepNotes($step);
-            if ($header === 'repeat') {
-                $repeaterStep = new RepeaterStep($parameters, $index);
-                $this->steps->add($repeaterStep);
+
+            $stepFactory = StepFactory::build($header, $parameters, $notes, $index);
+
+            if ($stepFactory instanceof RepeaterStep) {
+                //Store it into array with the index being whitespace to reference children steps later
+                $repStep[($whiteSpaceCount+2)] = $stepFactory;
+            }
+
+            if (isset($repStep[$whiteSpaceCount])) {
+                //Add step to repeater
+                $repStep[$whiteSpaceCount]->addStep($stepFactory);
             } else {
-                if ($repeater && $repeaterStep) {
-                    $stepFactory = StepFactory::build($header, $parameters, $notes, $index);
-                    $repeaterStep->addStep($stepFactory);
-                } else {
-                    $stepFactory = StepFactory::build($header, $parameters, $notes, $index);
-                    $this->steps->add($stepFactory);
-                }
+                //Store the step into the workout
+                $this->steps->add($stepFactory);
             }
         }
 
         return $this;
+    }
+
+    public function parseStepResult($whitespaceCount, $repeater, $header, $parameters, $notes, $index)
+    {
+        if ($header === 'repeat') {
+            $repeaterStep = new RepeaterStep($parameters, $index);
+            $this->steps->add($repeaterStep);
+        }
+    }
+
+    public function calculateWhiteSpace($stepText)
+    {
+        $regex = '/.+?(?=-)/';
+
+        $result = preg_match($regex, $stepText, $whiteText);
+
+        return $result && isset($whiteText[0]) ? strlen($whiteText[0]) : 0;
     }
 
     public function isRepeaterStep($stepText)
@@ -107,12 +133,17 @@ abstract class AbstractWorkout implements \JsonSerializable
 
     public function jsonSerialize()
     {
+        $name = $this->getName();
+        if (! empty($this->getPrefix())) {
+            $name = $this->getPrefix() . $this->getName();
+        }
+        
         return [
             'sportType' => [
                 'sportTypeId' => $this->getSportTypeId(),
                 'sportTypeKey' => $this->getSportTypeKey()
             ],
-            'workoutName' => $this->getName(),
+            'workoutName' => $name,
             'workoutSegments' => [[
                 'segmentOrder' => 1,
                 'sportType' => [
@@ -169,6 +200,24 @@ abstract class AbstractWorkout implements \JsonSerializable
     }
 
     /**
+     * @return string|null
+     */
+    public function getPrefix(): ?string
+    {
+        return $this->prefix;
+    }
+
+    /**
+     * @param string|null $prefix
+     * @return AbstractWorkout
+     */
+    public function setPrefix(?string $prefix): AbstractWorkout
+    {
+        $this->prefix = $prefix;
+        return $this;
+    }
+
+    /**
      * @param int|null $garminID
      * @return AbstractWorkout
      */
@@ -193,5 +242,10 @@ abstract class AbstractWorkout implements \JsonSerializable
         }
 
         return $output;
+    }
+
+    public function __toString()
+    {
+        return $this->getName();
     }
 }

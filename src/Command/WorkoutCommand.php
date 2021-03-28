@@ -2,12 +2,9 @@
 
 namespace App\Command;
 
-use App\Library\Handler\Event\CommandSubscriber;
-use App\Library\Handler\Event\FileValidationEvent;
-use App\Library\Handler\Event\HandlerEvent;
-use App\Library\Handler\HandlerEvents;
 use App\Library\Handler\HandlerFactory;
 use App\Library\Handler\HandlerOptions;
+use App\Subscriber\WorkoutCommandSubscriber;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -93,7 +90,7 @@ class WorkoutCommand extends Command
 
     protected function registerSubscriber(SymfonyStyle $symfonyStyle, EventDispatcherInterface $eventDispatcher)
     {
-        $subscriber = new CommandSubscriber($symfonyStyle);
+        $subscriber = new WorkoutCommandSubscriber($symfonyStyle);
         $eventDispatcher->addSubscriber($subscriber);
     }
 }

@@ -6,47 +6,93 @@ use App\Library\Parser\Model\Day;
 use App\Library\Parser\Model\PeriodCollection;
 use App\Library\Parser\Model\WeekCollection;
 use App\Library\Parser\Model\Workout\WorkoutFactory;
-use League\Csv\Reader;
+use App\Model\DebugMessages;
 use DateTime;
+use League\Csv\Reader;
 
 class Parser
 {
+    use DebugMessages;
+
     /** @var Reader $csv */
     protected $csv;
 
-    protected $debugMessages = [];
+    protected $records;
 
+    /**
+     * @param $path
+     * @return bool
+     */
     public function isValidFile($path)
     {
         $addToPath = [DIRECTORY_SEPARATOR, '..', DIRECTORY_SEPARATOR, '..', DIRECTORY_SEPARATOR, '..', DIRECTORY_SEPARATOR];
         $fullPath = __DIR__ . implode('', $addToPath) . $path;
         if (file_exists($fullPath)) {
-            $this->csv = Reader::createFromPath($fullPath, 'r');
+            $csv = Reader::createFromPath($fullPath, 'r');
+            $csv->setHeaderOffset(0);
+            $csv->skipEmptyRecords();
+            $this->records = $csv;
             return true;
         }
 
         return false;
     }
 
-    public function getTotalWeeks()
+    /**
+     * @return mixed
+     */
+    public function getRecords()
     {
-        $this->csv->setHeaderOffset(0);
-        $this->csv->skipEmptyRecords();
-        return count($this->csv);
+        return $this->records;
     }
 
-    public function parse(DateTime $startDate = null, $prefix = null)
+    public function getTotalWeeks()
     {
-        $this->csv->setHeaderOffset(0);
-        $this->csv->skipEmptyRecords();
-        $records = $this->csv->getRecords();
+        return count($this->records);
+    }
 
+    /**
+     * @return array
+     */
+    public function findAllWorkouts($prefix = null)
+    {
+        $workouts = [];
+
+        foreach ($this->records as $row) {
+            foreach ($row as $data) {
+                //Append newline to end
+                $data .= "\n";
+                //Try to parse workout
+                $workout = $this->parseWorkout($data);
+                if ($workout) {
+                    //Workout must have been made
+                    $name = $workout->getName();
+                    $workout->setPrefix($prefix);
+                    $workout->setName($name);
+                    $workouts[] = $workout;
+                }
+            }
+        }
+
+        $workouts = array_unique($workouts);
+
+        foreach ($workouts as $workout) {
+            $this->debugMessages[] .= (empty($workout->getName()) ? 'Workout parsed.' : $workout->getName());
+        }
+
+        return array_unique($workouts);
+    }
+
+    public function scheduleWorkouts(DateTime $startDate = null, $workouts)
+    {
         $period = new PeriodCollection();
         $debugCounter = 0;
 
         $days = Day::WEEK;
-        foreach ($records as $record) {
+
+        foreach ($this->records as $record) {
             $week = new WeekCollection();
+
             foreach ($days as $day) {
                 $entityDay = new Day();
                 $this->debugMessages[$debugCounter] = '';
@@ -60,76 +106,24 @@ class Parser
 
                 $week->addDay($entityDay);
 
-                $recordLines = preg_split("/((\r?\n)|(\r\n?))/", $record[$day]);
-                $lineNumbers = count($recordLines);
-                $lineNumber = 0;
-                $workout = "";
-                $workoutArr = array();
-                foreach ($recordLines as $recordLine) {
-                    $lineNumber++;
-                    if (! empty($recordLine)) {
-                        $regex = '/^(' . implode('|',WorkoutTypes::WORKOUTS) . ')?:/';
-                        $result = preg_match($regex, $recordLine, $workoutType);
+                $workoutName = $this->parseWorkoutName($record[$day]);
+                if ($workoutName === null) {
+                    $workoutName = $record[$day];
+                }
+                $foundWorkout = null;
 
-                        // new workout
-                        if ($result && isset($workoutType[1]) && ! empty($workoutType[1])) {
-                            // push previous workout to array
-                            if ($workout != "") {
-                                array_push($workoutArr, $workout);
-                            }
-                            $workout = $recordLine . "\n";
-                        }
-                        else {
-                            $workout .= $recordLine . "\n";
-                            // last line
-                            if($lineNumber === $lineNumbers) {
-                                array_push($workoutArr, $workout);
-                            }
-                        }
+                foreach ($workouts as $workout) {
+                    if ($workout->getName() === $workoutName) {
+                        $entityDay->addWorkout($workout);
+                        break;
                     }
                 }
 
-                $workoutNumbers = count($workoutArr);
-                $workoutNumber = 0;
-                foreach ($workoutArr as $workout) {
-                    $workoutNumber++;
-                    $workout = $this->parseWorkout($workout);
-                    $name = $prefix . $workout->getName();
-                    $workout->setName($name);
-                    if ($workoutNumbers > 1) {
-                        $this->debugMessages[$debugCounter] .= $workoutNumber . ". ";
-                    }
-                    $this->debugMessages[$debugCounter] .= (empty($workout->getName()) ? 'Workout parsed.' : $workout->getName());
-                    if ($workoutNumbers > 1 && $workoutNumber < $workoutNumbers) {
-                        $this->debugMessages[$debugCounter] .= "  -  ";
-                    }
-                    $entityDay->addWorkout($workout);
-                    
-                }
-                $debugCounter++;
             }
             $period->addWeek($week);
         }
 
         return $period;
-    }
-
-    /**
-     * @return array
-     */
-    public function getDebugMessages(): array
-    {
-        return $this->debugMessages;
-    }
-
-    /**
-     * @param array $debugMessages
-     * @return Parser
-     */
-    public function setDebugMessages(array $debugMessages): Parser
-    {
-        $this->debugMessages = $debugMessages;
-        return $this;
     }
 
     public function parseWorkoutType($workoutText)

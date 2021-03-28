@@ -8,6 +8,9 @@
     "doctrine/instantiator": {
         "version": "1.4.0"
     },
+    "escapestudios/symfony2-coding-standard": {
+        "version": "3.12.0"
+    },
     "league/csv": {
         "version": "9.6.0"
     },
@@ -37,6 +40,9 @@
     },
     "phpspec/prophecy": {
         "version": "1.12.2"
+    },
+    "phpstan/phpstan": {
+        "version": "0.12.78"
     },
     "phpunit/php-code-coverage": {
         "version": "9.2.5"
@@ -126,6 +132,18 @@
     },
     "sebastian/version": {
         "version": "3.0.2"
+    },
+    "squizlabs/php_codesniffer": {
+        "version": "3.0",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "master",
+            "version": "3.0",
+            "ref": "0dc9cceda799fd3a08b96987e176a261028a3709"
+        },
+        "files": [
+            "phpcs.xml.dist"
+        ]
     },
     "symfony/cache": {
         "version": "v5.0.7"
