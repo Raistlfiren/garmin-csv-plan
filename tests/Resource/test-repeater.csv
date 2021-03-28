@@ -1,0 +1,17 @@
+WEEK,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday,Estimated km,,Duration,Avg km,Miles
+1,"running: 2x4x2'@z5
+   - warmup: 20:00
+   - repeat: 2
+     - repeat: 4
+       - run: 1:00 @z5
+       - recover: 2:00 @z2
+     - recover: 4:00
+   - cooldown: 10:00","running: 3.5-4h run
+                              - run: 225:00
+                              - cooldown: lap-button","running: 14k, 4x 1.6k @TMP
+- warmup: 2km @z2;testing notes
+- repeat: 4
+  - run: 1600m @ 5:00-4:30;testing here too
+  - recover: 900m @z2
+- run: 2km;lolz
+- cooldown: lap-button;yeah",,,,,,78.0,,0:10:00,1.7,1.0
