@@ -20,6 +20,11 @@ abstract class AbstractWorkout implements \JsonSerializable
     protected $name;
 
     /**
+     * @var string|null
+     */
+    protected $prefix;
+
+    /**
      * @var integer|null
      */
     protected $garminID;
@@ -128,12 +133,17 @@ abstract class AbstractWorkout implements \JsonSerializable
 
     public function jsonSerialize()
     {
+        $name = $this->getName();
+        if (! empty($this->getPrefix())) {
+            $name = $this->getPrefix() . $this->getName();
+        }
+        
         return [
             'sportType' => [
                 'sportTypeId' => $this->getSportTypeId(),
                 'sportTypeKey' => $this->getSportTypeKey()
             ],
-            'workoutName' => $this->getName(),
+            'workoutName' => $name,
             'workoutSegments' => [[
                 'segmentOrder' => 1,
                 'sportType' => [
@@ -187,6 +197,24 @@ abstract class AbstractWorkout implements \JsonSerializable
     public function getGarminID(): ?int
     {
         return $this->garminID;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getPrefix(): ?string
+    {
+        return $this->prefix;
+    }
+
+    /**
+     * @param string|null $prefix
+     * @return AbstractWorkout
+     */
+    public function setPrefix(?string $prefix): AbstractWorkout
+    {
+        $this->prefix = $prefix;
+        return $this;
     }
 
     /**
