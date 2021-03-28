@@ -198,20 +198,28 @@ abstract class AbstractHandler implements HandlerInterface
         $this->dispatcher->dispatch($event, HandlerEvents::DELETE_WORKOUTS_ENDED);
     }
 
-    public function attachNotes(HandlerOptions $handlerOptions, PeriodCollection $period)
+    public function attachNotes(HandlerOptions $handlerOptions, $workouts)
     {
+        $stepsWithNotes = [];
+
         if ($handlerOptions->getDeleteOnly()) {
             return;
         }
         
-        $steps = $period->getStepsWithNotes();
+        foreach ($workouts as $workout) {
+            foreach ($workout->getAllSteps([], $workout->getSteps()) as $step) {
+                if ($step instanceof AbstractStep && ! empty($step->getNotes())) {
+                    $stepsWithNotes[] = $step->setWorkout($workout);
+                }
+            }
+        }
 
         //Loop through steps and add their notes
-        foreach ($steps as $step) {
+        foreach ($stepsWithNotes as $stepsWithNote) {
             if (! $handlerOptions->getDryrun()) {
                 // if the step has no GarminID, it means the same workout was already created
-                if ($stepID = $step->getGarminID()) {
-                    $this->client->createStepNote($stepID, $step->getNotes(), $step->getWorkout()->getGarminID());
+                if ($stepID = $stepsWithNote->getGarminID()) {
+                    $this->client->createStepNote($stepID, $stepsWithNote->getNotes(), $stepsWithNote->getWorkout()->getGarminID());
                 }
             }
         }
@@ -265,7 +273,8 @@ abstract class AbstractHandler implements HandlerInterface
         $event = new HandlerEvent($handlerOptions);
         $this->dispatcher->dispatch($event, HandlerEvents::PARSING_WORKOUTS_STARTED);
 
-        $workouts = $this->parser->findAllWorkouts();
+        $prefix = $handlerOptions->getPrefix();
+        $workouts = $this->parser->findAllWorkouts($prefix);
 
         $debugMessages = $this->parser->getDebugMessages();
         $event->setDebugMessages($debugMessages);

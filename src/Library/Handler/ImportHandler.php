@@ -45,9 +45,10 @@ class ImportHandler extends AbstractHandler
 //        $event->setDebugMessages($debugMessages);
 //        $this->dispatcher->dispatch($event, HandlerEvents::DELETE_WORKOUTS_ENDED);
 
+        $this->createWorkouts($handlerOptions, $workouts);
 //        $this->createWorkouts($handlerOptions, $days);
 
-//        $this->attachNotes($handlerOptions, $period);
+        $this->attachNotes($handlerOptions, $workouts);
 
 //        $event->setDebugMessages($debugMessages);
 //        $this->dispatcher->dispatch($event, HandlerEvents::CREATED_WORKOUTS_ENDED);

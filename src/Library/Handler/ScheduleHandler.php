@@ -68,9 +68,9 @@ class ScheduleHandler extends AbstractHandler
 
 //        $this->getLogger()->section('Scheduling workouts');
 
-        $this->scheduleWorkout($handlerOptions, $days);
-
-        $this->attachNotes($handlerOptions, $period);
+        $this->attachNotes($handlerOptions, $workouts);
+        
+        $this->scheduleWorkout($handlerOptions, $period->getDays());
 
 //        $this->getLogger()->listing($debugMessages);
 //        $this->getLogger()->success('Workout scheduling and import was successful.');
