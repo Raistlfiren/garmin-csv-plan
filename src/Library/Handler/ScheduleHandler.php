@@ -28,17 +28,18 @@ class ScheduleHandler extends AbstractHandler
         $totalWeeks = $this->parser->getTotalWeeks();
         $start = $this->timespan($totalWeeks, $start, $end);
 
-        $period = $this->parseWorkouts($handlerOptions, $start);
+        $workouts = $this->parseWorkouts($handlerOptions, $start);
+        $period = $this->parser->scheduleWorkouts($start, $workouts);
 
-        if ($period === null) {
-            return;
-        }
-
-        $workouts = $period->getWorkouts();
-        $days = $period->getDays();
+//        if ($period === null) {
+//            return;
+//        }
+//
+//        $workouts = $period->getWorkouts();
+//        $days = $period->getDays();
         $this->deleteWorkouts($handlerOptions, $workouts);
 
-        $this->createWorkouts($handlerOptions, $days);
+        $this->createWorkouts($handlerOptions, $workouts);
 
 //        $this->getLogger()->text('Starting scheduler on ' . $start->format('Y-m-d') . '.');
 

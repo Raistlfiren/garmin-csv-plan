@@ -7,6 +7,7 @@ use App\Library\Handler\Event\HandlerEvent;
 use App\Library\Handler\Event\HandlerEvents;
 use App\Library\Parser\Model\Day;
 use App\Library\Parser\Model\PeriodCollection;
+use App\Library\Parser\Model\Step\AbstractStep;
 use App\Library\Parser\Model\Workout\AbstractWorkout;
 use App\Library\Parser\Model\Workout\WorkoutFactory;
 use App\Library\Parser\Parser;
@@ -127,32 +128,39 @@ abstract class AbstractHandler implements HandlerInterface
 
         /** @var Day $day */
         $workoutList = [];
-        /** @var AbstractWorkout $workout */
-        foreach ($workouts as $workoutKey => $workout) {
+
+        if ($handlerOptions->getDryrun()) {
+            /** @var AbstractWorkout $workout */
             $workoutID = '**********';
-            $workoutName = $workout->getName();
-            if ($handlerOptions->getDryrun()) {
+            foreach ($workouts as $workoutKey => $workout) {
+                $workoutName = $workout->getName();
                 $debugMessages[] = 'Workout - ' . $workoutName . ' was created on the Garmin website with the id ' . $workoutID;
             }
-            else {
-                // same workout name already created?
-                if ($workoutID = array_search($workoutName, $workoutList, true)) {
-                    $workout->setGarminID($workoutID);
-                    $debugMessages[] = 'Workout - ' . $workoutName . ' was previously created on the Garmin website with the id ' . $workoutID;
+
+            $event->setDebugMessages($debugMessages);
+            $this->dispatcher->dispatch($event, HandlerEvents::CREATED_WORKOUTS_ENDED);
+            return;
+        }
+
+        /** @var AbstractWorkout $workout */
+        foreach ($workouts as $workoutKey => $workout) {
+            $workoutName = $workout->getName();
+            // same workout name already created?
+            if ($workoutID = array_search($workoutName, $workoutList, true)) {
+                $workout->setGarminID($workoutID);
+                $debugMessages[] = 'Workout - ' . $workoutName . ' was previously created on the Garmin website with the id ' . $workoutID;
+            } else {
+                $response = $this->client->createWorkout(json_encode($workout));
+                $workoutID = $response->workoutId;
+                $workoutSteps = $this->findWorkoutSteps($response->workoutSegments[0]);
+                $allSteps = $workout->getAllSteps([], $workout->getSteps());
+                foreach ($workoutSteps as $index => $workoutStep) {
+                    $allSteps[$index]->setGarminID($workoutStep['id']);
                 }
-                else {
-                    $response = $this->client->createWorkout(json_encode($workout));
-                    $workoutID = $response->workoutId;
-                    $workoutSteps = $this->findWorkoutSteps($response->workoutSegments[0]);
-                    $allSteps = $workout->getAllSteps([], $workout->getSteps());
-                    foreach ($workoutSteps as $index => $workoutStep) {
-                        $allSteps[$index]->setGarminID($workoutStep['id']);
-                    }
-                    $workout->setGarminID($response->workoutId);
-                    $workoutList[$response->workoutId] = $workoutName;
-                    $debugMessages[] = 'Workout - ' . $workoutName . ' was created on the Garmin website with the id ' . $workoutID;
-                    $day->updateWorkout($workoutKey, $workout);
-                }
+                $workout->setGarminID($response->workoutId);
+                $workoutList[$response->workoutId] = $workoutName;
+                $debugMessages[] = 'Workout - ' . $workoutName . ' was created on the Garmin website with the id ' . $workoutID;
+//                    $day->updateWorkout($workoutKey, $workout);
             }
         }
 
