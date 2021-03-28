@@ -35,7 +35,7 @@ abstract class AbstractWorkout implements \JsonSerializable
         $this->steps = new ArrayCollection();
     }
 
-    public function steps($steps)
+    public function steps($steps, $swimming = false)
     {
         $repeaterStep = null;
         $repStep = [];
@@ -46,7 +46,7 @@ abstract class AbstractWorkout implements \JsonSerializable
             $parameters = $this->parseStepDetails($step);
             $notes = $this->parseStepNotes($step);
 
-            $stepFactory = StepFactory::build($header, $parameters, $notes, $index);
+            $stepFactory = StepFactory::build($header, $parameters, $notes, $index, $swimming);
 
             if ($stepFactory instanceof RepeaterStep) {
                 //Store it into array with the index being whitespace to reference children steps later
@@ -137,8 +137,15 @@ abstract class AbstractWorkout implements \JsonSerializable
         if (! empty($this->getPrefix())) {
             $name = $this->getPrefix() . $this->getName();
         }
+
+        $swimming = [];
+        if ($this instanceof SwimmingWorkout) {
+            $swimming = [
+                'poolLength' => 25
+            ];
+        }
         
-        return [
+        $workout = [
             'sportType' => [
                 'sportTypeId' => $this->getSportTypeId(),
                 'sportTypeKey' => $this->getSportTypeKey()
@@ -153,6 +160,8 @@ abstract class AbstractWorkout implements \JsonSerializable
                 'workoutSteps' => $this->steps->toArray()
             ]]
         ];
+        
+        return array_merge($workout, $swimming);
     }
 
     /**

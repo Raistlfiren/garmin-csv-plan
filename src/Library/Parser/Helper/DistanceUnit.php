@@ -16,6 +16,11 @@ class DistanceUnit
         'm' => [
             'name' => 'meter',
             'toMeters' => 1
+        ],
+        'yds' => [
+            'name' => 'yard',
+            // Don't convert yards to meters....
+            'toMeters' => 1
         ]
     ];
 
@@ -39,7 +44,7 @@ class DistanceUnit
 
     public static function withPaceUOM($shortName)
     {
-        switch($shortName) {
+        switch ($shortName) {
             case 'mpk':
                 return 'km';
             case 'mpm':
@@ -49,7 +54,7 @@ class DistanceUnit
 
     public static function withSpeedUOM($shortName)
     {
-        switch($shortName) {
+        switch ($shortName) {
             case 'kph':
                 return 'km';
             case 'mph':

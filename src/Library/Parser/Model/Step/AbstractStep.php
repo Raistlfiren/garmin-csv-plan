@@ -3,6 +3,8 @@
 namespace App\Library\Parser\Model\Step;
 
 use App\Library\Parser\Model\Duration\DurationFactory;
+use App\Library\Parser\Model\Swim\EquipmentType;
+use App\Library\Parser\Model\Swim\StrokeType;
 use App\Library\Parser\Model\Target\TargetFactory;
 use App\Library\Parser\Model\Workout\AbstractWorkout;
 
@@ -38,7 +40,22 @@ abstract class AbstractStep implements \JsonSerializable
      */
     protected $workout;
 
-    public function __construct($stepText, $notes, $stepOrder)
+    /**
+     * @var boolean
+     */
+    protected $swimming;
+
+    /**
+     * @var StrokeType
+     */
+    protected $swimmingStroke;
+
+    /**
+     * @var EquipmentType
+     */
+    protected $swimmingEquipment;
+
+    public function __construct($stepText, $notes, $stepOrder, $swimming)
     {
         $this->notes = $notes;
         $this->order = $stepOrder;
@@ -47,6 +64,12 @@ abstract class AbstractStep implements \JsonSerializable
 
         $this->duration = DurationFactory::build($duration);
         $this->target = TargetFactory::build($target);
+
+        // Check for specific strokes and equipment
+        if ($swimming) {
+            $this->swimmingStroke = StrokeType::testStroke($stepText);
+            $this->swimmingEquipment = EquipmentType::testEquipment($stepText);
+        }
     }
 
     public function parseTextDuration($stepDetailsText)
@@ -81,6 +104,8 @@ abstract class AbstractStep implements \JsonSerializable
     {
         $duration = [];
         $target = [];
+        $swimmingStroke = [];
+        $swimmingEquipment = [];
 
         if ($this->duration) {
             $duration = $this->duration->jsonSerialize();
@@ -88,6 +113,14 @@ abstract class AbstractStep implements \JsonSerializable
 
         if ($this->target) {
             $target = $this->target->jsonSerialize();
+        }
+
+        if ($this->swimmingStroke) {
+            $swimmingStroke = $this->swimmingStroke->jsonSerialize();
+        }
+
+        if ($this->swimmingEquipment) {
+            $swimmingEquipment = $this->swimmingEquipment->jsonSerialize();
         }
 
         $steps = [
@@ -102,7 +135,7 @@ abstract class AbstractStep implements \JsonSerializable
             ]
         ];
 
-        return array_merge($steps, $duration, $target);
+        return array_merge($steps, $duration, $target, $swimmingStroke, $swimmingEquipment);
     }
 
     /**

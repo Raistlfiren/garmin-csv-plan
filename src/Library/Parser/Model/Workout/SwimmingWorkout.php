@@ -2,15 +2,15 @@
 
 namespace App\Library\Parser\Model\Workout;
 
-class CustomWorkout extends AbstractWorkout
+class SwimmingWorkout extends AbstractWorkout
 {
     protected function getSportTypeId()
     {
-        return 3;
+        return 4;
     }
 
     protected function getSportTypeKey()
     {
-        return 'other';
+        return 'swimming';
     }
 }

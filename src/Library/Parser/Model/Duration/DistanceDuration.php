@@ -6,7 +6,7 @@ use App\Library\Parser\Helper\DistanceUnit;
 
 class DistanceDuration extends AbstractDuration
 {
-    const REGEX = '/^(\d+(.\d+)?)\s*(km|mi|m)$/';
+    const REGEX = '/^(\d+(.\d+)?)\s*(km|mi|m|yds)$/';
 
     protected $distance;
 

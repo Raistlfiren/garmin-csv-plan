@@ -1,0 +1,18 @@
+WEEK,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday
+1,"custom: Lift Weights
+- warmup: 10:00
+- go: 10:00 @z2
+- cooldown: 10:00","running: 12 @ 400m with 400m rest
+- warmup: 1mi
+- repeat: 12
+  - run: 400m @ 6:50-7:00mpm
+  - recover: 400m
+- cooldown: 1mi","swimming: 1000 yards
+- warmup: 100yds
+- swim: 1000yds Any Stroke Fins
+- cooldown: 100yds","cycling: 20 miles
+- bike: 20mi",,"running: 1.5h run
+- run: 90:00
+- cooldown: lap-button","running: 3h run
+- run: 180:00
+- cooldown: lap-button"
