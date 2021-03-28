@@ -53,7 +53,7 @@ class Parser
     /**
      * @return array
      */
-    public function findAllWorkouts()
+    public function findAllWorkouts($prefix = null)
     {
         $workouts = [];
 
@@ -80,6 +80,49 @@ class Parser
         }
 
         return array_unique($workouts);
+    }
+
+    public function scheduleWorkouts(DateTime $startDate = null, $workouts)
+    {
+        $period = new PeriodCollection();
+        $debugCounter = 0;
+
+        $days = Day::WEEK;
+
+        foreach ($this->records as $record) {
+            $week = new WeekCollection();
+
+            foreach ($days as $day) {
+                $entityDay = new Day();
+                $this->debugMessages[$debugCounter] = '';
+
+                if ($startDate) {
+                    $entityDay->setDate(clone $startDate);
+                    $this->debugMessages[$debugCounter] = $startDate->format('Y-m-d') . ' - ';
+                    //Increment date by 1...
+                    $startDate->modify('+1 day');
+                }
+
+                $week->addDay($entityDay);
+
+                $workoutName = $this->parseWorkoutName($record[$day]);
+                if ($workoutName === null) {
+                    $workoutName = $record[$day];
+                }
+                $foundWorkout = null;
+
+                foreach ($workouts as $workout) {
+                    if ($workout->getName() === $workoutName) {
+                        $entityDay->addWorkout($workout);
+                        break;
+                    }
+                }
+
+            }
+            $period->addWeek($week);
+        }
+
+        return $period;
     }
 
     public function parse(DateTime $startDate = null, $prefix = null)
