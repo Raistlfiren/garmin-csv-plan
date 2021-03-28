@@ -193,12 +193,15 @@ abstract class AbstractHandler implements HandlerInterface
 
         //Loop through workout names and delete them from Garmin
         foreach ($workoutNames as $workoutName) {
-            while ($workoutKey = array_search($workoutName, $workoutList, true)) {
-                if (! $handlerOptions->getDryrun()) {
-                    $this->client->deleteWorkout($workoutKey);
+            foreach ($workoutList as $workoutKey => $workout) {
+                //Delete all workouts that contain the workout name
+                if (strpos($workout, $workoutName) !== false) {
+                    if (! $handlerOptions->getDryrun()) {
+                        $this->client->deleteWorkout($workoutKey);
+                    }
+                    unset($workoutList[$workoutKey]);
+                    $debugMessages[] = 'Workout - ' . $workoutName . ' with id ' . $workoutKey . ' was deleted from the Garmin website.';
                 }
-                unset($workoutList[$workoutKey]);
-                $debugMessages[] = 'Workout - ' . $workoutName . ' with id ' . $workoutKey . ' was deleted from the Garmin website.';
             }
         }
 
