@@ -20,10 +20,12 @@ class HandlerFactory
 
     public function buildCommand(HandlerOptions $handlerOptions)
     {
-        foreach($this->iterableHandlers as $handler) {
+        foreach ($this->iterableHandlers as $handler) {
             if ($handler->supports($handlerOptions->getCommand())) {
-                $handler->handle($handlerOptions);
+                return $handler->handle($handlerOptions);
             }
         }
+
+        throw new \Exception('Invalid handler. Please use a valid handler other than what was supplied - ' . $handlerOptions->getCommand());
     }
 }

@@ -6,6 +6,7 @@ namespace App\Tests\Library\Parser\Model\Step;
 use App\Library\Parser\Model\Step\CooldownStep;
 use App\Library\Parser\Model\Step\IntervalStep;
 use App\Library\Parser\Model\Step\RecoverStep;
+use App\Library\Parser\Model\Step\RepeaterStep;
 use App\Library\Parser\Model\Step\RestStep;
 use App\Library\Parser\Model\Step\StepFactory;
 use App\Library\Parser\Model\Step\WarmupStep;
@@ -82,7 +83,7 @@ class StepFactoryTest extends TestCase
     {
         $stepObject = StepFactory::build('repeat', null, null, null);
 
-        self::assertEmpty($stepObject);
+        self::assertInstanceOf(RepeaterStep::class, $stepObject);
     }
 
     public function testInvalidStep()
