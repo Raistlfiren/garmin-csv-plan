@@ -12,7 +12,7 @@ It also has the ability to:
  - **ONLY** delete workouts (Do not import anything)  
  - Schedule workouts on Garmin Connect calendar based upon a start **OR** end date
 
-## Examples
+## Example
 Convert this text -
 
 ```csv
