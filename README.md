@@ -5,10 +5,40 @@
 This is a PHP implementation of the great program that mgifos created [here](https://github.com/mgifos/quick-plan). 
 The intentions of the program is to parse a CSV file and create workouts in Garmin Connect.
 It also has the ability to:
- - Schedule workouts on Garmin Connect calendar based upon a start or end date
- - Delete workouts that are made based upon the CSV file
- - Add notes to workout steps
+ - Import workouts from a file into Garmin Connect
  - Prefix workouts with some text ex.: Convert `14k, 4x 1.6k @TMP` TO `HANSON:14k, 4x 1.6k @TMP`
+ - Add notes to workout steps
+ - Delete workouts that are made based upon the CSV file
+ - **ONLY** delete workouts (Do not import anything)  
+ - Schedule workouts on Garmin Connect calendar based upon a start **OR** end date
+
+## Examples
+Convert this text -
+
+```csv
+running: 2x4x2'@z5
+- warmup: 20:00
+- repeat: 2
+   - repeat: 4
+      - run: 1:00 @z5
+      - recover: 2:00 @z2
+   - recover: 4:00
+- cooldown: 10:00
+```
+
+INTO 
+
+![Garmin Workout](./doc/img/nested-repeat-example.jpg)
+
+AND SCHEDULED ONTO
+
+![Garmin Calendar](./doc/img/calendar-example.jpg)
+
+Through this command - 
+
+```shell
+docker-compose exec garmin-dev bin/console garmin:workout tests/Resource/all-example.csv schedule -s '2021-05-01' -r 'TriPrep: '
+```
 
 ## Setting up the application to develop or run
 1) Download and install [PHP](https://www.php.net/) and [composer](https://getcomposer.org/)
