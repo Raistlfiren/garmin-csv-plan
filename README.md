@@ -8,6 +8,7 @@ It has the ability to:
  - Import workouts from a file into Garmin Connect
  - Prefix workouts with some text ex.: Convert `14k, 4x 1.6k @TMP` TO `HANSON:14k, 4x 1.6k @TMP`
  - Add notes to workout steps
+ - Schedule existing workouts based upon name: Ex.: [Simple Google Sheets CSV Plan](https://docs.google.com/spreadsheets/d/1zaKw9EWnJBtkGRjJf6pAaJKeYmqWneIG5N9Giij3zm0/edit?usp=sharing) 
  - Delete workouts that are made based upon the CSV file
  - **ONLY** delete workouts (Do not import anything)  
  - Schedule workouts on Garmin Connect calendar based upon a start **OR** end date
