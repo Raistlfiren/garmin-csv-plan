@@ -25,7 +25,7 @@ abstract class AbstractWorkout implements \JsonSerializable
     protected $prefix;
 
     /**
-     * @var integer|null
+     * @var float|null
      */
     protected $garminID;
 
@@ -201,9 +201,9 @@ abstract class AbstractWorkout implements \JsonSerializable
     }
 
     /**
-     * @return int|null
+     * @return float|null
      */
-    public function getGarminID(): ?int
+    public function getGarminID(): ?float
     {
         return $this->garminID;
     }
@@ -227,10 +227,10 @@ abstract class AbstractWorkout implements \JsonSerializable
     }
 
     /**
-     * @param int|null $garminID
+     * @param float|null $garminID
      * @return AbstractWorkout
      */
-    public function setGarminID(?int $garminID): AbstractWorkout
+    public function setGarminID(?float $garminID): AbstractWorkout
     {
         $this->garminID = $garminID;
         return $this;

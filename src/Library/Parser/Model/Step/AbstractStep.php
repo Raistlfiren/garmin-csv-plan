@@ -31,7 +31,7 @@ abstract class AbstractStep implements \JsonSerializable
     protected $notes;
 
     /**
-     * @var integer|null
+     * @var float|null
      */
     protected $garminID;
 
@@ -139,9 +139,9 @@ abstract class AbstractStep implements \JsonSerializable
     }
 
     /**
-     * @return int|null
+     * @return float|null
      */
-    public function getGarminID(): ?int
+    public function getGarminID(): ?float
     {
         return $this->garminID;
     }
