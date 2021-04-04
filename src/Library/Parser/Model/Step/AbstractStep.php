@@ -147,10 +147,10 @@ abstract class AbstractStep implements \JsonSerializable
     }
 
     /**
-     * @param int|null $garminID
+     * @param float|null $garminID
      * @return AbstractStep
      */
-    public function setGarminID(?int $garminID): AbstractStep
+    public function setGarminID(?float $garminID): AbstractStep
     {
         $this->garminID = $garminID;
         return $this;

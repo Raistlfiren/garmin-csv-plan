@@ -4,7 +4,7 @@
 
 This is a PHP implementation of the great program that mgifos created [here](https://github.com/mgifos/quick-plan). 
 The intentions of the program is to parse a CSV file and create workouts in Garmin Connect.
-It also has the ability to:
+It has the ability to:
  - Import workouts from a file into Garmin Connect
  - Prefix workouts with some text ex.: Convert `14k, 4x 1.6k @TMP` TO `HANSON:14k, 4x 1.6k @TMP`
  - Add notes to workout steps
@@ -13,7 +13,7 @@ It also has the ability to:
  - Schedule workouts on Garmin Connect calendar based upon a start **OR** end date
 
 ## Example
-Convert this text -
+CONVERT THIS -
 
 ```csv
 running: 2x4x2'@z5
@@ -34,7 +34,7 @@ AND SCHEDULED ONTO
 
 ![Garmin Calendar](./doc/img/calendar-example.jpg)
 
-Through this command - 
+THROUGH THIS COMMAND - 
 
 ```shell
 docker-compose exec garmin-dev bin/console garmin:workout tests/Resource/all-example.csv schedule -s '2021-05-01' -r 'TriPrep: '
