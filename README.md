@@ -13,6 +13,11 @@ It has the ability to:
  - **ONLY** delete workouts (Do not import anything)  
  - Schedule workouts on Garmin Connect calendar based upon a start **OR** end date
 
+## Google Sheet Examples
+[Example of all Workout Types](https://docs.google.com/spreadsheets/d/1AAAbfSvPshHxqMvTAfcEBTL75JEKP6daVGIYlL0gztc/edit?usp=sharing)
+[Simple Google Sheets CSV Plan](https://docs.google.com/spreadsheets/d/1zaKw9EWnJBtkGRjJf6pAaJKeYmqWneIG5N9Giij3zm0/edit?usp=sharing)
+[Ultra 80K Plan](https://docs.google.com/spreadsheets/d/1NcUreGyYcZzz6KmZHNcu85xU-SKuNG-_AraOQsjNRV0/edit?usp=sharing)
+
 ## Example
 CONVERT THIS -
 
