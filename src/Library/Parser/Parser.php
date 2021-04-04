@@ -35,7 +35,7 @@ class Parser
             return true;
         }
 
-        return false;
+        throw new \Exception('Invalid file. Please make sure the file exists.');
     }
 
     /**
@@ -108,7 +108,8 @@ class Parser
 
                 $workoutName = $this->parseWorkoutName($record[$day]);
                 if ($workoutName === null) {
-                    $workoutName = $record[$day];
+                    // Remove /n/t/... from workout name
+                    $workoutName = trim($record[$day]);
                 }
                 $foundWorkout = null;
 
