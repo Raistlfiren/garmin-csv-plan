@@ -18,10 +18,11 @@ class ParserTest extends TestCase {
 
     public function testFailIsValidFile()
     {
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('Invalid file. Please make sure the file exists.');
         $filePath = 'tests/Resource/testasssss.csv';
         $parser = new Parser();
-
-        $this->assertFalse($parser->isValidFile($filePath), 'File valid when it shouldn\'t be.');
+        $parser->isValidFile($filePath);
     }
 
     /**
