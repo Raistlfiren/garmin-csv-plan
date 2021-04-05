@@ -39,16 +39,17 @@ class WorkoutCommand extends Command
         $this
             ->setDescription('Parses and reads a CSV file into Garmin Connect')
             ->setHelp('This command allows you to parse out a CSV file')
-            ->addArgument('csv', InputArgument::REQUIRED, 'CSV File provided to the command')
-            ->addArgument('type', InputArgument::OPTIONAL, 'import|schedule command', 'import')
+            ->addArgument('csv', InputArgument::REQUIRED, 'The specified CSV file path that you want to import into Garmin connect')
+            ->addArgument('type', InputArgument::OPTIONAL, 'Specify import OR schedule to either just import the workouts into Garmin connect 
+or import **AND** schedule the workouts.', 'import')
             ->addOption('email', 'm',InputOption::VALUE_REQUIRED, 'Email to login to Garmin', '')
             ->addOption('password', 'p', InputOption::VALUE_REQUIRED, 'Password to login to Garmin', '')
-            ->addOption('delete', 'x', InputOption::VALUE_NONE, 'Delete previous workouts')
-            ->addOption('delete-only', 'X', InputOption::VALUE_NONE, 'Delete previous workouts but do not create new ones')
+            ->addOption('delete', 'x', InputOption::VALUE_NONE, 'Delete previous workouts from CSV file')
+            ->addOption('delete-only', 'X', InputOption::VALUE_NONE, 'ONLY delete workouts that are contained in the CSV file')
             ->addOption('dry-run', null, InputOption::VALUE_NONE, 'Dry run that will prevent anything from being created or deleted from Garmin')
             ->addOption('prefix', 'r', InputOption::VALUE_OPTIONAL, 'A prefix to put before every workout name/title', null)
-            ->addOption('start', 's', InputOption::VALUE_REQUIRED, 'Date of the first day of the first week of the plan')
-            ->addOption('end', 'd', InputOption::VALUE_REQUIRED, 'Date of the last day of the last week of the plan');
+            ->addOption('start', 's', InputOption::VALUE_REQUIRED, 'Date of the FIRST day of the first week of the plan Ex.: 2021-01-01 YYYY-MM-DD')
+            ->addOption('end', 'd', InputOption::VALUE_REQUIRED, 'Date of the LAST day of the last week of the plan Ex.: 2021-01-31 YYYY-MM-DD');
 
     }
 

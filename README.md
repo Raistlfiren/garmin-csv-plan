@@ -88,28 +88,33 @@ bin/console garmin:workout <file.csv> schedule -m <garmin_email> -p <garmin_pass
 
 ## Arguments
 
-`<file.csv>` - The specified CSV file that you want to import into Garmin connect.
-
-`import|schedule` - Specify import or schedule to either just import the workouts into Garmin connect 
-or import **AND** schedule the workouts.
+| Value  | Description |
+| ------------- | ------------- |
+| <path-to-file.csv>  | The specified CSV file path that you want to import into Garmin connect  |
+| import **OR** schedule  | Specify **import** OR **schedule** to either just import the workouts into Garmin connect or import **AND** schedule the workouts. **[default value: "import"]**  |
 
 ## Options
 
-`--email`, `-m` - email that you use to login to Garmin
 
-`--password`, `-p` - password that you use to login to Garmin
-
-`--delete`, `-x` - delete previous workouts that are in the plan from Garmin
-
-`--delete-only`, `-X` - ONLY delete previous workouts that are in the plan from Garmin
-
-`--dry-run` - List out workouts found in the plan and display them
-
-`--prefix`, `-r` - Prefix all workouts with text
-
-`--start`, `-s` - Specify the start date of when you want scheduled workouts to be planned on your calendar in Garmin
-
-`--end`, `-d` - Specify the end date of when you want scheduled workouts to be planned on your calendar in Garmin
+| Short form  | Long form | Description |
+| ------------- | ------------- | ------------- |
+| -m  | --email=EMAIL  | Email to login to Garmin **[default: ""]** |
+| -p  | --password=PASSWORD  | Password to login to Garmin **[default: ""]** |
+| -x  | --delete  | Delete previous workouts from CSV file |
+| -X  | --delete-only  | NLY delete workouts that are contained in the CSV file |
+|   | --dry-run  | Dry run that will prevent anything from being created or deleted from Garmin |
+| -r  | --prefix=PREFIX  | A prefix to put before every workout name/title |
+| -s  | --start=START  |  Date of the FIRST day of the first week of the plan Ex.: 2021-01-01 YYYY-MM-DD |
+| -d  | --end=END  | Date of the LAST day of the last week of the plan Ex.: 2021-01-31 YYYY-MM-DD |
+| -h  | --help | Display help message |
+| -q  | --quiet  | Do not output any message |
+| -V  | --version  | Display this application version |
+|   | --ansi  | Force ANSI output |
+|   | --no-ansi  | Disable ANSI output|
+| -n  | --no-interaction  | Do not ask any interactive question |
+| -e  | --env=ENV  | The Environment name. **[default: "dev"]** |
+|  | --no-debug  | Switches off debug mode. |
+| -v OR -vv OR -vvv  | --verbose  | Increase the verbosity of messages: 1 for normal output, 2 for more verbose output and 3 for debug |
 
 ## Developing and running the program through Docker
 1) Start by building and running the docker file - `docker-compose up garmin-dev`
