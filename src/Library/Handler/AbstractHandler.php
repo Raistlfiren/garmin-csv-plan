@@ -105,7 +105,8 @@ abstract class AbstractHandler implements HandlerInterface
         $this->dispatcher->dispatch($event, HandlerEvents::PARSING_WORKOUTS_STARTED);
 
         $prefix = $handlerOptions->getPrefix();
-        $workouts = $this->parser->findAllWorkouts($prefix);
+        $poolSize = $handlerOptions->getPoolSize();
+        $workouts = $this->parser->findAllWorkouts($prefix, $poolSize);
 
         $debugMessages = $this->parser->getDebugMessages();
         $event->setDebugMessages($debugMessages);

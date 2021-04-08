@@ -57,6 +57,11 @@ class HandlerOptions
     protected $dryrun;
 
     /**
+     * @var string|null
+     */
+    protected $poolSize;
+
+    /**
      * @return string
      */
     public function getPath(): string
@@ -233,6 +238,24 @@ class HandlerOptions
     public function setDryrun($dryrun)
     {
         $this->dryrun = $dryrun;
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getPoolSize(): ?string
+    {
+        return $this->poolSize;
+    }
+
+    /**
+     * @param string|null $poolSize
+     * @return HandlerOptions
+     */
+    public function setPoolSize(?string $poolSize): HandlerOptions
+    {
+        $this->poolSize = $poolSize;
         return $this;
     }
 }

@@ -48,6 +48,7 @@ or import **AND** schedule the workouts.', 'import')
             ->addOption('delete-only', 'X', InputOption::VALUE_NONE, 'ONLY delete workouts that are contained in the CSV file')
             ->addOption('dry-run', null, InputOption::VALUE_NONE, 'Dry run that will prevent anything from being created or deleted from Garmin')
             ->addOption('prefix', 'r', InputOption::VALUE_OPTIONAL, 'A prefix to put before every workout name/title', null)
+            ->addOption('pool-size', null, InputOption::VALUE_OPTIONAL, 'The pool size specified for all workouts in the plan Ex.: 25yds OR 100m', null)
             ->addOption('start', 's', InputOption::VALUE_REQUIRED, 'Date of the FIRST day of the first week of the plan Ex.: 2021-01-01 YYYY-MM-DD')
             ->addOption('end', 'd', InputOption::VALUE_REQUIRED, 'Date of the LAST day of the last week of the plan Ex.: 2021-01-31 YYYY-MM-DD');
 
@@ -63,6 +64,7 @@ or import **AND** schedule the workouts.', 'import')
         $password = $input->getOption('password');
         $prefix = $input->getOption('prefix');
         $dryrun = $input->getOption('dry-run');
+        $poolSize = $input->getOption('pool-size');
         $delete = $input->getOption('delete');
         $deleteOnly = $input->getOption('delete-only');
         $path = $input->getArgument('csv');
@@ -74,6 +76,7 @@ or import **AND** schedule the workouts.', 'import')
         $handlerOptions->setPassword($password);
         $handlerOptions->setPrefix($prefix);
         $handlerOptions->setDryrun($dryrun);
+        $handlerOptions->setPoolSize($poolSize);
         $handlerOptions->setDelete($delete||$deleteOnly);
         $handlerOptions->setDeleteOnly($deleteOnly);
         $handlerOptions->setPath($path);

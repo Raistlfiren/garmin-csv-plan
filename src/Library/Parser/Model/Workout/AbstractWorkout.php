@@ -141,7 +141,12 @@ abstract class AbstractWorkout implements \JsonSerializable
         $swimming = [];
         if ($this instanceof SwimmingWorkout) {
             $swimming = [
-                'poolLength' => 25
+                'poolLength' => $this->poolSizeLength,
+                "poolLengthUnit" => [
+                    "factor" => null,
+		            "unitId" => null,
+		            "unitKey" => $this->poolSizeUnit
+                ]
             ];
         }
         

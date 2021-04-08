@@ -54,7 +54,7 @@ class Parser
     /**
      * @return array
      */
-    public function findAllWorkouts($prefix = null)
+    public function findAllWorkouts($prefix = null, $poolSize = null)
     {
         $workouts = [];
 
@@ -63,7 +63,7 @@ class Parser
                 //Append newline to end
                 $data .= "\n";
                 //Try to parse workout
-                $workout = $this->parseWorkout($data);
+                $workout = $this->parseWorkout($data, $poolSize);
                 if ($workout) {
                     //Workout must have been made
                     $name = $workout->getName();
@@ -172,7 +172,7 @@ class Parser
         return null;
     }
 
-    public function parseWorkout($workoutText)
+    public function parseWorkout($workoutText, $poolSize = null)
     {
         //Read first line
         $workoutType = $this->parseWorkoutType($workoutText);
@@ -183,6 +183,6 @@ class Parser
         //Read steps into array
         $steps = $this->parseSteps($stepsText);
 
-        return WorkoutFactory::build($workoutType, $workoutName, $steps);
+        return WorkoutFactory::build($workoutType, $workoutName, $steps, $poolSize);
     }
 }

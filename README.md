@@ -12,6 +12,7 @@ It has the ability to:
  - Delete workouts that are made based upon the CSV file
  - **ONLY** delete workouts (Do not import anything)  
  - Schedule workouts on Garmin Connect calendar based upon a start **OR** end date
+ - Create swimming workouts by specifying the pool size as an option Ex.: `--pool-size=25yds`
 
 ## Google Sheet Examples
 [Example of all Workout Types](https://docs.google.com/spreadsheets/d/1AAAbfSvPshHxqMvTAfcEBTL75JEKP6daVGIYlL0gztc/edit?usp=sharing)
@@ -67,6 +68,10 @@ Specify a CSV file to create and delete workouts in Garmin connect and schedule 
 **You can remove the -m and -p flag by copying `.env` to `.env.local` AND updating the file with your username and password under 
 `GARMIN_USERNAME` and `GARMIN_PASSWORD`.**
 
+If you have pool workouts included in your plan, then you must specify the `--pool-size` option with the length of the pool. Ex.:
+25yds
+100m
+
 ```shell
 
 # Basic example of importing workouts into Garmin
@@ -103,6 +108,7 @@ bin/console garmin:workout <file.csv> schedule -m <garmin_email> -p <garmin_pass
 | -x  | --delete  | Delete previous workouts from CSV file |
 | -X  | --delete-only  | NLY delete workouts that are contained in the CSV file |
 |   | --dry-run  | Dry run that will prevent anything from being created or deleted from Garmin |
+|   | --pool-size  | The pool size specified for all workouts in the plan Ex.: 25yds OR 100m |
 | -r  | --prefix=PREFIX  | A prefix to put before every workout name/title |
 | -s  | --start=START  |  Date of the FIRST day of the first week of the plan Ex.: 2021-01-01 YYYY-MM-DD |
 | -d  | --end=END  | Date of the LAST day of the last week of the plan Ex.: 2021-01-31 YYYY-MM-DD |
