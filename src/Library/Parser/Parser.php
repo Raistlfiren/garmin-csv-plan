@@ -62,14 +62,22 @@ class Parser
             foreach ($row as $data) {
                 //Append newline to end
                 $data .= "\n";
-                //Try to parse workout
-                $workout = $this->parseWorkout($data, $poolSize);
-                if ($workout) {
-                    //Workout must have been made
-                    $name = $workout->getName();
-                    $workout->setPrefix($prefix);
-                    $workout->setName($name);
-                    $workouts[] = $workout;
+
+                // Find all workouts for a day
+                $workoutGroups = $this->splitWorkoutText($data);
+
+                if (! empty($workoutGroups)) {
+                    foreach ($workoutGroups as $workoutGroupText) {
+                        //Try to parse workout
+                        $workout = $this->parseWorkout($workoutGroupText, $poolSize);
+                        if ($workout) {
+                            //Workout must have been made
+                            $name = $workout->getName();
+                            $workout->setPrefix($prefix);
+                            $workout->setName($name);
+                            $workouts[] = $workout;
+                        }
+                    }
                 }
             }
         }
@@ -81,6 +89,54 @@ class Parser
         }
 
         return array_unique($workouts);
+    }
+
+    protected function splitWorkoutText($workoutText)
+    {
+        $splitLines = explode("\n", $workoutText);
+
+        $headers = $this->parseMultiWorkouts($workoutText);
+
+        $workoutGroups = [];
+
+        if (is_array($headers)) {
+            $workoutCounterMax = count($headers);
+            $workoutKeys = array_keys($headers);
+
+            for ($workoutCounter = 0; $workoutCounter < $workoutCounterMax; $workoutCounter++) {
+                $individualWorkoutText = '';
+
+                // Means only one workout for the day
+                if ($workoutCounterMax === 1) {
+                    foreach ($splitLines as $line) {
+                        $individualWorkoutText .= $line . "\n";
+                    }
+
+                    $workoutGroups[] = $individualWorkoutText;
+
+                // Must be last workout in set
+                } else if ($workoutCounterMax === ($workoutCounter + 1)) {
+                    foreach ($splitLines as $line) {
+                        $individualWorkoutText .= $line . "\n";
+                    }
+
+                    $workoutGroups[] = $individualWorkoutText;
+                } else {
+                    $nextIndex = $workoutKeys[($workoutCounter + 1)] - $workoutKeys[$workoutCounter];
+
+                    for ($lineCounter = 0; $lineCounter < $nextIndex; $lineCounter++) {
+                        $individualWorkoutText .= $splitLines[$lineCounter] . "\n";
+                        unset($splitLines[$lineCounter]);
+                    }
+
+                    $splitLines = array_values($splitLines);
+
+                    $workoutGroups[] = $individualWorkoutText;
+                }
+            }
+        }
+
+        return $workoutGroups;
     }
 
     public function scheduleWorkouts(DateTime $startDate = null, $workouts)
@@ -106,25 +162,48 @@ class Parser
 
                 $week->addDay($entityDay);
 
-                $workoutName = $this->parseWorkoutName($record[$day]);
-                if ($workoutName === null) {
-                    // Remove /n/t/... from workout name
-                    $workoutName = trim($record[$day]);
-                }
-                $foundWorkout = null;
+                $workoutNames = $this->parseMultiWorkouts($record[$day]);
 
-                foreach ($workouts as $workout) {
-                    if ($workout->getName() === $workoutName) {
-                        $entityDay->addWorkout($workout);
-                        break;
+                if (! empty($workoutNames)) {
+                    foreach ($workoutNames as &$workoutName) {
+                        $workoutName = $this->parseWorkoutName($workoutName);
                     }
                 }
+
+                if ($workoutNames === null) {
+                    // Remove /n/t/... from workout name
+                    $workoutNames[] = trim($record[$day]);
+                }
+//                $foundWorkout = null;
+
+
+                    foreach ($workoutNames as $workoutName) {
+                        foreach ($workouts as $workout) {
+                            if ($workout->getName() === $workoutName) {
+                                $entityDay->addWorkout($workout);
+                                break;
+                            }
+                        }
+                    }
 
             }
             $period->addWeek($week);
         }
 
         return $period;
+    }
+
+    public function parseMultiWorkouts($workoutText)
+    {
+        // Generates regex - /^(running|cycling|swimming|etc...)?:/
+        $regex = '/(' . implode('|',WorkoutTypes::WORKOUTS) . ')/';
+        $result = preg_grep($regex, explode("\n", $workoutText));
+
+        if ($result) {
+            return $result;
+        }
+
+        return null;
     }
 
     public function parseWorkoutType($workoutText)
