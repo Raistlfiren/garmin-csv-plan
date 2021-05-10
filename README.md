@@ -13,6 +13,8 @@ It has the ability to:
  - **ONLY** delete workouts (Do not import anything)  
  - Schedule workouts on Garmin Connect calendar based upon a start **OR** end date
  - Create swimming workouts by specifying the pool size as an option Ex.: `--pool-size=25yds`
+ - Import **AND** schedule multiple workouts per day
+ - Nest repeated steps
 
 ## Google Sheet Examples
 [Example of all Workout Types](https://docs.google.com/spreadsheets/d/1AAAbfSvPshHxqMvTAfcEBTL75JEKP6daVGIYlL0gztc/edit?usp=sharing)
