@@ -16,8 +16,8 @@
 - run: 40:00 @128 - 154 bpm","","running: 9x1'@5k r2'
 - warmup: 25:00 @128 - 154 bpm
 - repeat: 9
-   - run: 1:00 @3:45-3:55 mpk; @5k
-   - recover: 2:00 @z2
+  - run: 1:00 @3:45-3:55 mpk; @5k
+  - recover: 2:00 @z2
 - recover: 10:00 @z1","running: 30'@z3
 - warmup: 20:00 @128 - 154 bpm
 - run: 30:00 @z3
@@ -34,8 +34,8 @@
 - run: 40:00 @128 - 154 bpm","","running: 9x1'@5k r1'30
 - warmup: 25:00 @128 - 154 bpm
 - repeat: 9
-   - run: 1:00 @3:45-3:55 mpk; @5k
-   - recover: 1:30 @z2
+  - run: 1:00 @3:45-3:55 mpk; @5k
+  - recover: 1:30 @z2
 - recover: 10:00 @z1","running: 40'@z3
 - warmup: 20:00 @128 - 154 bpm
 - run: 40:00 @z3
@@ -50,8 +50,8 @@
 - bike: 90:00 @z1","","running: 9x1'@5k r1'30
 - warmup: 25:00 @128 - 154 bpm
 - repeat: 9
-   - run: 1:00 @3:45-3:55 mpk; @5k
-   - recover: 1:30 @z2
+  - run: 1:00 @3:45-3:55 mpk; @5k
+  - recover: 1:30 @z2
 - recover: 10:00 @z1","running: 50'@z3
 - warmup: 20:00 @128 - 154 bpm
 - run: 40:00 @z3
