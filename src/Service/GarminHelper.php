@@ -146,11 +146,17 @@ class GarminHelper
         foreach ($days as $day) {
             /** @var AbstractWorkout $workout */
             foreach ($day->getWorkouts() as $workoutKey => $workout) {
-                if ($day->getDate() && $workout->getGarminID()) {
+                if ($day->getDate()) {
                     $formattedDate = $day->getDate()->format('Y-m-d');
                     $data = json_encode(['date' => $formattedDate]);
-                    $this->client->scheduleWorkout($workout->getGarminID(), $data);
-                    $debugMessages[] = 'Workout - ' . $workout->getName() . ' with id '  . $workout->getGarminID() .' was scheduled on the Garmin website for ' . $formattedDate;
+
+                    $messageID = ' is going to be scheduled on ';
+
+                    if ($workout->getGarminID()) {
+                        $this->client->scheduleWorkout($workout->getGarminID(), $data);
+                        $messageID = ' with id '  . $workout->getGarminID() .' was scheduled on the Garmin website for ';
+                    }
+                    $debugMessages[] = 'Workout - ' . $workout->getName() .  $messageID . $formattedDate;
                 }
             }
         }
