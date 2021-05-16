@@ -162,14 +162,17 @@ class Parser
 
                 $week->addDay($entityDay);
 
+                // Parse first line of workout including name and activity Ex.: running: easy run
                 $workoutNames = $this->parseMultiWorkouts($record[$day]);
 
                 if (! empty($workoutNames)) {
+                    // Parse out the actual name of te workout Ex.: easy run
                     foreach ($workoutNames as &$workoutName) {
                         $workoutName = $this->parseWorkoutName($workoutName);
                     }
                 }
 
+                // Check to see if it is just the workout name
                 if ($workoutNames === null) {
                     // Remove /n/t/... from workout name
                     $workoutNames[] = trim($record[$day]);
@@ -177,14 +180,18 @@ class Parser
 //                $foundWorkout = null;
 
 
-                    foreach ($workoutNames as $workoutFullName) {
-                        foreach ($workouts as $workout) {
-                            if ($workout->getName() === $workoutFullName) {
-                                $entityDay->addWorkout($workout);
-                                break;
-                            }
+                // Loop through workout names to get all workouts in a day
+                foreach ($workoutNames as $workoutFullName) {
+                    // Loop through parsed workouts
+                    foreach ($workouts as $workout) {
+                        // Test to see if the workout name is a legit workout that was imported
+                        if ($workout->getName() === $workoutFullName) {
+                            // Add the workout to the day
+                            $entityDay->addWorkout($workout);
+                            break;
                         }
                     }
+                }
 
             }
             $period->addWeek($week);
