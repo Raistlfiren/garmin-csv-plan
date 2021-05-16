@@ -177,9 +177,9 @@ class Parser
 //                $foundWorkout = null;
 
 
-                    foreach ($workoutNames as $workoutName) {
+                    foreach ($workoutNames as $workoutFullName) {
                         foreach ($workouts as $workout) {
-                            if ($workout->getName() === $workoutName) {
+                            if ($workout->getName() === $workoutFullName) {
                                 $entityDay->addWorkout($workout);
                                 break;
                             }
