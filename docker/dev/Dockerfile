@@ -5,7 +5,7 @@ FROM php:7.4-cli
 #  && pecl install xdebug \
 #  && docker-php-ext-enable xdebug \
 #  && apk del .phpize-deps
-RUN apt-get install git \
+RUN apt-get update && apt-get install git -y \
     && pecl install xdebug \
     && docker-php-ext-enable xdebug
 
