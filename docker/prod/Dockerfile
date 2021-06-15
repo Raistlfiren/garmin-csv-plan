@@ -1,10 +1,11 @@
-FROM php:7.4-cli-alpine
+FROM php:7.4-cli
 
-RUN set -xe \
-    && apk add --no-cache --update --virtual .phpize-deps $PHPIZE_DEPS \
-    && rm -rf /usr/share/php \
-    && rm -rf /tmp/* \
-    && apk del  .phpize-deps
+#RUN
+# set -xe \
+#    && apk add --no-cache --update --virtual .phpize-deps $PHPIZE_DEPS \
+#    rm -rf /usr/share/php \
+#    && rm -rf /tmp/* \
+#    && apk del  .phpize-deps
 
 COPY . /usr/src/garmin-csv-plan
 
