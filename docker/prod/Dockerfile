@@ -7,7 +7,7 @@ FROM php:7.4-cli
 #    && rm -rf /tmp/* \
 #    && apk del  .phpize-deps
 
-RUN apt-get update && apt-get install git -y
+RUN apt-get update && apt-get install git zip unzip -y
 
 COPY . /usr/src/garmin-csv-plan
 
