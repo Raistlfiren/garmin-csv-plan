@@ -7,6 +7,8 @@ FROM php:7.4-cli
 #    && rm -rf /tmp/* \
 #    && apk del  .phpize-deps
 
+RUN apt-get install git
+
 COPY . /usr/src/garmin-csv-plan
 
 RUN cd /usr/src/garmin-csv-plan \

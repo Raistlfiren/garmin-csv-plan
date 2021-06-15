@@ -5,7 +5,8 @@ FROM php:7.4-cli
 #  && pecl install xdebug \
 #  && docker-php-ext-enable xdebug \
 #  && apk del .phpize-deps
-RUN pecl install xdebug \
+RUN apt-get install git \
+    && pecl install xdebug \
     && docker-php-ext-enable xdebug
 
 # Install composer to run composer install with the specified PHP version of the project
