@@ -35,7 +35,7 @@ class WorkoutCommand extends Command
         parent::__construct();
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setDescription('Parses and reads a CSV file into Garmin Connect')
@@ -55,7 +55,7 @@ or import **AND** schedule the workouts.', 'import')
 
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
         $io->title('Starting workout import/export command');
@@ -93,7 +93,7 @@ or import **AND** schedule the workouts.', 'import')
     }
 
 
-    protected function registerSubscriber(SymfonyStyle $symfonyStyle, EventDispatcherInterface $eventDispatcher)
+    protected function registerSubscriber(SymfonyStyle $symfonyStyle, EventDispatcherInterface $eventDispatcher): void
     {
         $subscriber = new WorkoutCommandSubscriber($symfonyStyle);
         $eventDispatcher->addSubscriber($subscriber);
