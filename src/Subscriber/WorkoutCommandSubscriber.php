@@ -2,10 +2,10 @@
 
 namespace App\Subscriber;
 
+use App\Library\Handler\Event\HandlerEvent;
+use App\Library\Handler\Event\HandlerEvents;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use App\Library\Handler\Event\HandlerEvents;
-use App\Library\Handler\Event\HandlerEvent;
 
 class WorkoutCommandSubscriber implements EventSubscriberInterface
 {
@@ -19,7 +19,7 @@ class WorkoutCommandSubscriber implements EventSubscriberInterface
         $this->symfonyStyle = $symfonyStyle;
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             HandlerEvents::FILE_VALIDATION_STARTED => 'onFileValidationStarted',
