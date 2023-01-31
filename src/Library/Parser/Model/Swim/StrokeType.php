@@ -48,7 +48,7 @@ class StrokeType implements \JsonSerializable
         return $this->strokeId;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return [
             'strokeType' => [

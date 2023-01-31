@@ -12,7 +12,7 @@ abstract class AbstractDuration implements \JsonSerializable
 
     abstract protected function getConditionValue();
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return [
             'endCondition' => [

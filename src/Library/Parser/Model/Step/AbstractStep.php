@@ -100,7 +100,7 @@ abstract class AbstractStep implements \JsonSerializable
 
     abstract protected function getStepTypeKey();
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         $duration = [];
         $target = [];

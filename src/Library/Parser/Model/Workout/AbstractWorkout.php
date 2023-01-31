@@ -131,7 +131,7 @@ abstract class AbstractWorkout implements \JsonSerializable
 
     abstract protected function getSportTypeKey();
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         $name = $this->getName();
         if (! empty($this->getPrefix())) {

@@ -46,7 +46,7 @@ class EquipmentType implements \JsonSerializable
         return $this->equipmentId;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return [
             'equipmentType' => [

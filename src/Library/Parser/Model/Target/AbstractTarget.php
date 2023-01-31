@@ -20,7 +20,7 @@ abstract class AbstractTarget implements \JsonSerializable
         return null;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return [
             'targetType' => [
