@@ -33,8 +33,8 @@ class TargetFactoryTest extends TestCase
         $jsonArray = $targetObject->jsonSerialize();
 
         self::assertEquals(6, $jsonArray['targetType']['workoutTargetTypeId']);
-        self::assertEquals(2.5641025641026, $jsonArray['targetValueOne']);
-        self::assertEquals(2.3809523809524, $jsonArray['targetValueTwo']);
+        self::assertEquals(2.564103, $jsonArray['targetValueOne']);
+        self::assertEquals(2.380952, $jsonArray['targetValueTwo']);
         self::assertEmpty($jsonArray['zoneNumber']);
         self::assertEquals('pace.zone', $jsonArray['targetType']['workoutTargetTypeKey']);
     }

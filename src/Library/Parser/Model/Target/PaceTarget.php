@@ -77,6 +77,6 @@ class PaceTarget extends AbstractTarget
             $seconds = trim($timeArray[1]);
         }
 
-        return $this->uom['toMeters'] / ($minutes * 60 + $seconds);
+        return round($this->uom['toMeters'] / ($minutes * 60 + $seconds), 6);
     }
 }
