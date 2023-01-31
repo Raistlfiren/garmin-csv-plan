@@ -27,11 +27,12 @@ class WorkoutCommand extends Command
      */
     private $dispatcher;
 
-    public function __construct(string $name = null, HandlerFactory $handlerFactory, EventDispatcherInterface $dispatcher)
+    public function __construct(HandlerFactory $handlerFactory, EventDispatcherInterface $dispatcher)
     {
-        parent::__construct($name);
         $this->handlerFactory = $handlerFactory;
         $this->dispatcher = $dispatcher;
+
+        parent::__construct();
     }
 
     protected function configure()
