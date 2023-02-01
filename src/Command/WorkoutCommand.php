@@ -6,6 +6,7 @@ use App\Library\Handler\HandlerFactory;
 use App\Library\Handler\HandlerOptions;
 use App\Subscriber\WorkoutCommandSubscriber;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -13,6 +14,11 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
+#[AsCommand(
+    name: 'garmin:workout',
+    description: 'Parses and reads a CSV file into Garmin Connect',
+    hidden: false,
+)]
 class WorkoutCommand extends Command
 {
     protected static $defaultName = 'garmin:workout';
@@ -38,7 +44,6 @@ class WorkoutCommand extends Command
     protected function configure(): void
     {
         $this
-            ->setDescription('Parses and reads a CSV file into Garmin Connect')
             ->setHelp('This command allows you to parse out a CSV file')
             ->addArgument('csv', InputArgument::REQUIRED, 'The specified CSV file path that you want to import into Garmin connect')
             ->addArgument('type', InputArgument::OPTIONAL, 'Specify import OR schedule to either just import the workouts into Garmin connect 

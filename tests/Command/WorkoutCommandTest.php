@@ -2,9 +2,9 @@
 
 namespace App\Tests\Command;
 
-use App\Command\WorkoutCommand;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Symfony\Component\Console\Command\LazyCommand;
 use Symfony\Component\Console\Tester\CommandTester;
 
 class WorkoutCommandTest extends KernelTestCase
@@ -16,7 +16,7 @@ class WorkoutCommandTest extends KernelTestCase
 
         $command = $application->find('garmin:workout');
 
-        $this->assertInstanceOf(WorkoutCommand::class, $command, 'Command was not found.');
+        $this->assertInstanceOf(LazyCommand::class, $command, 'Command was not found.');
 
         $commandTester = new CommandTester($command);
         $commandTester->execute([
