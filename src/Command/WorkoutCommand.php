@@ -43,7 +43,7 @@ class WorkoutCommand extends Command
     {
         $this
             ->setHelp('This command allows you to parse out a CSV file')
-            ->addArgument('csv', InputArgument::REQUIRED, 'The specified CSV file path that you want to import into Garmin connect')
+            ->addArgument('csv', InputArgument::REQUIRED, 'The RELATIVE CSV file path that you want to import into Garmin connect')
             ->addArgument('type', InputArgument::OPTIONAL, 'Specify import OR schedule to either just import the workouts into Garmin connect 
 or import **AND** schedule the workouts.', 'import')
             ->addOption('email', 'm',InputOption::VALUE_REQUIRED, 'Email to login to Garmin', '')

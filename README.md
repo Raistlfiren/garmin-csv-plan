@@ -97,7 +97,7 @@ bin/console garmin:workout <file.csv> schedule -m <garmin_email> -p <garmin_pass
 
 | Value  | Description |
 | ------------- | ------------- |
-| <path-to-file.csv>  | The specified CSV file path that you want to import into Garmin connect  |
+| <path-to-file.csv>  | The **RELATIVE** CSV file path that you want to import into Garmin connect  |
 | import **OR** schedule  | Specify **import** OR **schedule** to either just import the workouts into Garmin connect or import **AND** schedule the workouts. **[default value: "import"]**  |
 
 ## Options
