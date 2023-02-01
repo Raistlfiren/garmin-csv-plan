@@ -21,8 +21,6 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 )]
 class WorkoutCommand extends Command
 {
-    protected static $defaultName = 'garmin:workout';
-
     /**
      * @var HandlerFactory
      */
