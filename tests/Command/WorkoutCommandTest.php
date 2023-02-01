@@ -11,8 +11,6 @@ class WorkoutCommandTest extends KernelTestCase
 {
     public function testCommand()
     {
-        $this->markTestSkipped('must be revisited.');
-
         $kernel = static::createKernel();
         $application = new Application($kernel);
 
@@ -22,8 +20,15 @@ class WorkoutCommandTest extends KernelTestCase
 
         $commandTester = new CommandTester($command);
         $commandTester->execute([
-            'csv' => 'tests/Resources/test.csv',
+            'csv' => 'tests/Resource/test.csv',
             '--dry-run' => true,
         ]);
+
+        $commandTester->assertCommandIsSuccessful();
+
+        $output = $commandTester->getDisplay();
+
+        $this->assertStringContainsString('3.5-4h run', $output);
+        $this->assertStringContainsString('14k, 4x 1.6k @TMP', $output);
     }
 }
