@@ -14,7 +14,7 @@ class DistanceDuration extends AbstractDuration
 
     public static function testDistance($durationText)
     {
-        $result = preg_match(self::REGEX, $durationText, $distance);
+        $result = $durationText && preg_match(self::REGEX, $durationText, $distance);
 
         if ($result && isset($distance[1]) && ! empty($distance[1]) && isset($distance[3]) && ! empty($distance[3])) {
             return new DistanceDuration($distance[1], $distance[3]);

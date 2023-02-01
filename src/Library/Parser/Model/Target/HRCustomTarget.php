@@ -12,7 +12,7 @@ class HRCustomTarget extends AbstractTarget
 
     public static function testHR($hrText)
     {
-        $result = preg_match(self::REGEX, $hrText, $hr);
+        $result = $hrText && preg_match(self::REGEX, $hrText, $hr);
 
         if ($result && isset($hr[1]) && ! empty($hr[1]) && isset($hr[2]) && ! empty($hr[2])) {
             return new HRCustomTarget($hr[1], $hr[2]);

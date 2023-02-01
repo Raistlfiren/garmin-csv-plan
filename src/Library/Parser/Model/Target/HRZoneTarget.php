@@ -10,7 +10,7 @@ class HRZoneTarget extends AbstractTarget
 
     public static function testHR($hrText)
     {
-        $result = preg_match(self::REGEX, $hrText, $hr);
+        $result = $hrText && preg_match(self::REGEX, $hrText, $hr);
 
         if ($result && isset($hr[1]) && ! empty($hr[1])) {
             return new HRZoneTarget($hr[1]);

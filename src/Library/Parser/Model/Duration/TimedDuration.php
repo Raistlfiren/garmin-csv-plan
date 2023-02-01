@@ -12,7 +12,7 @@ class TimedDuration extends AbstractDuration
 
     public static function testTimed($durationText)
     {
-        $result = preg_match(self::REGEX, $durationText, $timed);
+        $result = $durationText && preg_match(self::REGEX, $durationText, $timed);
 
         if ($result && isset($timed[1]) && isset($timed[2]) && (! empty($timed[1]) || ! empty($timed[2]))) {
             return new TimedDuration($timed[1], $timed[2]);

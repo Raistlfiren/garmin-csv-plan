@@ -12,7 +12,7 @@ class PowerTarget extends AbstractTarget
 
     public static function testPower($powerText)
     {
-        $result = preg_match(self::REGEX, $powerText, $power);
+        $result = $powerText && preg_match(self::REGEX, $powerText, $power);
 
         if ($result && isset($power[1]) && ! empty($power[1]) && isset($power[2]) && ! empty($power[2])) {
             return new PowerTarget($power[1], $power[2]);

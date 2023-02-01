@@ -75,7 +75,7 @@ abstract class AbstractStep implements \JsonSerializable
     public function parseTextDuration($stepDetailsText)
     {
         $regex = '/^\s*([^ ]*)/';
-        $result = preg_match($regex, $stepDetailsText, $duration);
+        $result = $stepDetailsText && preg_match($regex, $stepDetailsText, $duration);
 
         if ($result && isset($duration[1]) && ! empty($duration[1])) {
             return trim($duration[1]);
@@ -87,7 +87,7 @@ abstract class AbstractStep implements \JsonSerializable
     public function parseTextTarget($stepDetailsText)
     {
         $regex = '/@\s*(.*)/';
-        $result = preg_match($regex, $stepDetailsText, $target);
+        $result = $stepDetailsText && preg_match($regex, $stepDetailsText, $target);
 
         if ($result && isset($target[1]) && ! empty($target[1])) {
             return trim($target[1]);

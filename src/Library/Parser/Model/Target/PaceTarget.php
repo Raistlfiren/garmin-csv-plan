@@ -18,7 +18,7 @@ class PaceTarget extends AbstractTarget
 
     public static function testPace($paceText)
     {
-        $result = preg_match(self::REGEX, $paceText, $pace);
+        $result = $paceText && preg_match(self::REGEX, $paceText, $pace);
 
         if ($result && isset($pace[1]) && ! empty($pace[1]) && isset($pace[2]) && ! empty($pace[2])) {
             $from = $pace[1];

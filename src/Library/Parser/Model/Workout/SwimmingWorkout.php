@@ -35,7 +35,7 @@ class SwimmingWorkout extends AbstractWorkout
     {
         $regex = '/^(\d+(.\d+)?)\s*(m|yds)$/';
 
-        $result = preg_match($regex, $poolSize, $length);
+        $result = $poolSize && preg_match($regex, $poolSize, $length);
 
         if ($result && isset($length[1]) && ! empty($length[1]) && isset($length[3]) && ! empty($length[3])) {
             $this->poolSizeLength = $length[1];

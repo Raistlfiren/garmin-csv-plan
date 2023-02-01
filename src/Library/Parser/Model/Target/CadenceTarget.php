@@ -12,7 +12,7 @@ class CadenceTarget extends AbstractTarget
 
     public static function testCadence($cadenceText)
     {
-        $result = preg_match(self::REGEX, $cadenceText, $cadence);
+        $result = $cadenceText && preg_match(self::REGEX, $cadenceText, $cadence);
 
         if ($result && isset($cadence[1]) && ! empty($cadence[1]) && isset($cadence[2]) && ! empty($cadence[2])) {
             return new CadenceTarget($cadence[1], $cadence[2]);

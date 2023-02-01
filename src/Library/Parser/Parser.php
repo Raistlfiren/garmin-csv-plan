@@ -217,7 +217,7 @@ class Parser
     {
         // Generates regex - /^(running|cycling|swimming|etc...)?:/
         $regex = '/^(' . implode('|',WorkoutTypes::WORKOUTS) . ')?:/';
-        $result = preg_match($regex, $workoutText, $workoutType);
+        $result = $workoutText && preg_match($regex, $workoutText, $workoutType);
 
         if ($result && isset($workoutType[1]) && ! empty($workoutType[1])) {
             return trim($workoutType[1]);
@@ -229,7 +229,7 @@ class Parser
     public function parseWorkoutName($workoutText)
     {
         $regex = '/:\s{1,}(.*)/';
-        $result = preg_match($regex, $workoutText, $workoutName);
+        $result = $workoutText && preg_match($regex, $workoutText, $workoutName);
 
         if ($result && isset($workoutName[1]) && ! empty($workoutName[1])) {
             return trim($workoutName[1]);

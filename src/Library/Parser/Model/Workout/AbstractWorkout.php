@@ -77,7 +77,7 @@ abstract class AbstractWorkout implements \JsonSerializable
     {
         $regex = '/.+?(?=-)/';
 
-        $result = preg_match($regex, $stepText, $whiteText);
+        $result = $stepText && preg_match($regex, $stepText, $whiteText);
 
         return $result && isset($whiteText[0]) ? strlen($whiteText[0]) : 0;
     }
@@ -86,7 +86,7 @@ abstract class AbstractWorkout implements \JsonSerializable
     {
         $regex = '/^\s{1,}-.*$/';
 
-        $result = preg_match($regex, $stepText, $stepHeader);
+        $result = $stepText && preg_match($regex, $stepText, $stepHeader);
 
         return $result && isset($stepHeader[0]) && ! empty($stepHeader[0]);
     }
@@ -94,7 +94,7 @@ abstract class AbstractWorkout implements \JsonSerializable
     public function parseStepHeader($stepText)
     {
         $regex = '/-\s*([^:]*)/';
-        $result = preg_match($regex, $stepText, $stepHeader);
+        $result = $stepText && preg_match($regex, $stepText, $stepHeader);
 
         if ($result && isset($stepHeader[1]) && ! empty($stepHeader[1])) {
             return trim($stepHeader[1]);
@@ -106,7 +106,7 @@ abstract class AbstractWorkout implements \JsonSerializable
     public function parseStepDetails($stepText)
     {
         $regex = '/:\s*([^;]*)/';
-        $result = preg_match($regex, $stepText, $stepDetails);
+        $result = $stepText && preg_match($regex, $stepText, $stepDetails);
 
         if ($result && isset($stepDetails[1]) && ! empty($stepDetails[1])) {
             return trim($stepDetails[1]);
@@ -118,7 +118,7 @@ abstract class AbstractWorkout implements \JsonSerializable
     public function parseStepNotes($stepText)
     {
         $regex = '/;\s*(.*)/';
-        $result = preg_match($regex, $stepText, $stepNotes);
+        $result = $stepText && preg_match($regex, $stepText, $stepNotes);
 
         if ($result && isset($stepNotes[1]) && ! empty($stepNotes[1])) {
             return trim($stepNotes[1]);
