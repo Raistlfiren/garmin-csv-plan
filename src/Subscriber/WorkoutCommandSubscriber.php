@@ -73,6 +73,7 @@ class WorkoutCommandSubscriber implements EventSubscriberInterface
         if (! $answer) {
             $this->symfonyStyle->note('Stopping import process');
             $event->setStop(true);
+            die();
         }
     }
 
