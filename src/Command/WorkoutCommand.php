@@ -75,6 +75,13 @@ or import **AND** schedule the workouts.', 'import')
         $start = $input->getOption('start');
         $end = $input->getOption('end');
 
+        if ($command === 'import') {
+            if (! empty($start) || ! empty($end)) {
+                $io->error('You supplied the START and/or END date for scheduling workouts on a calendar, but IMPORT was specified for the command type. Please specify the schedule argument when running the command. For example - ./bin/console garmin:workout <file>.csv schedule -s <date>');
+                return Command::SUCCESS;
+            }
+        }
+
         $handlerOptions = new HandlerOptions();
         $handlerOptions->setEmail($email);
         $handlerOptions->setPassword($password);
@@ -92,7 +99,7 @@ or import **AND** schedule the workouts.', 'import')
 
         $this->handlerFactory->buildCommand($handlerOptions);
 
-        return 0;
+        return Command::SUCCESS;
     }
 
 
