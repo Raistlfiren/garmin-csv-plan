@@ -74,7 +74,7 @@ class ScheduleHandler extends AbstractHandler
      */
     protected function convertStringToDate(string $date = null) : ?DateTime
     {
-        $date = DateTime::createFromFormat('Y-m-d', $date);
+        $date = DateTime::createFromFormat('Y-m-d', $date ?? '');
         return ($date ? $date : null);
     }
 

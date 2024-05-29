@@ -1,4 +1,4 @@
-FROM php:8.1-alpine
+FROM php:8.3-alpine
 
 RUN set -xe \
     && apk add --no-cache --update --virtual .phpize-deps $PHPIZE_DEPS \

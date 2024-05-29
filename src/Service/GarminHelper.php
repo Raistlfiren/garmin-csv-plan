@@ -66,7 +66,13 @@ class GarminHelper
                 $debugMessages[] = 'Workout - ' . $workoutName . ' was previously created on the Garmin website with the id ' . $workoutID;
             } else {
                 $response = $this->client->createWorkout(json_encode($workout));
+                if (! isset($response, $response->workoutId)) {
+                    $debugMessages[] = 'Workout - ' . $workoutName . ' failed to create';
+                    continue;
+                }
+
                 $workoutID = $response->workoutId;
+
                 $workoutSteps = $this->findWorkoutSteps($response->workoutSegments[0]);
                 $allSteps = $workout->getAllSteps([], $workout->getSteps());
                 foreach ($workoutSteps as $index => $workoutStep) {

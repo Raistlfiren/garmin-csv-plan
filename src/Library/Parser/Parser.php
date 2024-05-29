@@ -175,7 +175,7 @@ class Parser
                 // Check to see if it is just the workout name
                 if ($workoutNames === null) {
                     // Remove /n/t/... from workout name
-                    $workoutNames[] = trim($record[$day]);
+                    $workoutNames[] = trim($record[$day] ?? '');
                 }
 //                $foundWorkout = null;
 
