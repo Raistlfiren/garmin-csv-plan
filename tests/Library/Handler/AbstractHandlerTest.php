@@ -1,14 +1,12 @@
 <?php
 
-
 namespace App\Tests\Library\Handler;
 
-
+use App\Http\GarminClient\GarminClient;
 use App\Library\Handler\AbstractHandler;
 use App\Library\Handler\HandlerOptions;
 use App\Library\Parser\Parser;
 use App\Service\GarminHelper;
-use dawguk\GarminConnect;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -40,7 +38,7 @@ class AbstractHandlerTest extends TestCase
         $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
         $this->garminHelper = $this->createMock(GarminHelper::class);
         $this->handler = $this->getMockForAbstractClass(AbstractHandler::class, [$parser, $this->eventDispatcher, $this->garminHelper]);
-        $this->client = $this->createPartialMock(GarminConnect::class, ['getWorkoutList']);
+        $this->client = $this->createPartialMock(GarminClient::class, ['getWorkoutList']);
     }
 
     public function testDeleteWorkouts()
