@@ -39,9 +39,9 @@ class GarminAuthenticator
 
     public function __construct(
         private HttpClientInterface $httpClient,
-        #[Autowire(env: '%env(GARMIN_USERNAME)%')]
+        #[Autowire(env: 'GARMIN_USERNAME')]
         private string $garminUsername,
-        #[Autowire(env: '%env(GARMIN_PASSWORD)%')]
+        #[Autowire(env: 'GARMIN_PASSWORD')]
         private string $garminPassword,
         #[Autowire('%kernel.project_dir%')]
         private readonly string $projectDirectory
