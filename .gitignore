@@ -28,3 +28,5 @@ docker-compose.override.yaml
 ###< squizlabs/php_codesniffer ###
 
 .idea/
+
+garmin_credentials.json

@@ -31,7 +31,7 @@ abstract class AbstractStep implements \JsonSerializable
     protected $notes;
 
     /**
-     * @var float|null
+     * @var int|null
      */
     protected $garminID;
 
@@ -128,7 +128,7 @@ abstract class AbstractStep implements \JsonSerializable
             'stepId' => null,
             'stepOrder' => $this->order,
             'childStepId' => null,
-            'description' => null,
+            'description' => $this->notes,
             'stepType' => [
                 'stepTypeId' => $this->getStepTypeId(),
                 'stepTypeKey' => $this->getStepTypeKey()
@@ -139,18 +139,18 @@ abstract class AbstractStep implements \JsonSerializable
     }
 
     /**
-     * @return float|null
+     * @return int|null
      */
-    public function getGarminID(): ?float
+    public function getGarminID(): ?int
     {
         return $this->garminID;
     }
 
     /**
-     * @param float|null $garminID
+     * @param int|null $garminID
      * @return AbstractStep
      */
-    public function setGarminID(?float $garminID): AbstractStep
+    public function setGarminID(?int $garminID): AbstractStep
     {
         $this->garminID = $garminID;
         return $this;

@@ -12,8 +12,6 @@ services:
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
 
         bind:
-            $garminUsername: '%env(GARMIN_USERNAME)%'
-            $garminPassword: '%env(GARMIN_PASSWORD)%'
 
     _instanceof:
         App\Library\Handler\HandlerInterface:

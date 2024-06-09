@@ -25,7 +25,7 @@ abstract class AbstractWorkout implements \JsonSerializable
     protected $prefix;
 
     /**
-     * @var float|null
+     * @var int|null
      */
     protected $garminID;
 
@@ -149,7 +149,7 @@ abstract class AbstractWorkout implements \JsonSerializable
                 ]
             ];
         }
-        
+
         $workout = [
             'sportType' => [
                 'sportTypeId' => $this->getSportTypeId(),
@@ -165,7 +165,7 @@ abstract class AbstractWorkout implements \JsonSerializable
                 'workoutSteps' => $this->steps->toArray()
             ]]
         ];
-        
+
         return array_merge($workout, $swimming);
     }
 
@@ -206,9 +206,9 @@ abstract class AbstractWorkout implements \JsonSerializable
     }
 
     /**
-     * @return float|null
+     * @return int|null
      */
-    public function getGarminID(): ?float
+    public function getGarminID(): ?int
     {
         return $this->garminID;
     }
@@ -232,10 +232,10 @@ abstract class AbstractWorkout implements \JsonSerializable
     }
 
     /**
-     * @param float|null $garminID
+     * @param int|null $garminID
      * @return AbstractWorkout
      */
-    public function setGarminID(?float $garminID): AbstractWorkout
+    public function setGarminID(?int $garminID): AbstractWorkout
     {
         $this->garminID = $garminID;
         return $this;

@@ -2,52 +2,27 @@
 
 namespace App\Service;
 
+use App\Http\GarminClient\GarminClient;
 use App\Library\Parser\Model\Day;
 use App\Library\Parser\Model\Step\AbstractStep;
 use App\Library\Parser\Model\Workout\AbstractWorkout;
 use App\Model\DebugMessages;
-use dawguk\GarminConnect;
 
 class GarminHelper
 {
     use DebugMessages;
 
-    /**
-     * @var GarminConnect $client
-     */
-    protected $client;
-
-    /**
-     * @var string
-     */
-    protected $username;
-
-    /**
-     * @var string
-     */
-    protected $password;
-
-    public function __construct($garminUsername, $garminPassword)
-    {
-        $this->username = $garminUsername;
-        $this->password = $garminPassword;
+    public function __construct(
+        private GarminClient $client
+    ) {
     }
 
-    public function createGarminClient($username, $password)
+    public function createGarminClient($username, $password): void
     {
-        $credentials = [
-            'username' => $username,
-            'password' => $password,
-        ];
-
-        if (empty($username) && empty($password)) {
-            $credentials = [
-                'username' => $this->username,
-                'password' => $this->password,
-            ];
+        if (! empty($username) && ! empty($password)) {
+            // Set user credentials based on what is added as an argument to command prompt
+            $this->client->addCredentials($username, $password);
         }
-
-        $this->client = new GarminConnect($credentials);
     }
 
     public function createWorkouts(array $workouts)
@@ -65,7 +40,7 @@ class GarminHelper
                 $workout->setGarminID($workoutID);
                 $debugMessages[] = 'Workout - ' . $workoutName . ' was previously created on the Garmin website with the id ' . $workoutID;
             } else {
-                $response = $this->client->createWorkout(json_encode($workout));
+                $response = $this->client->createWorkout($workout);
                 if (! isset($response, $response->workoutId)) {
                     $debugMessages[] = 'Workout - ' . $workoutName . ' failed to create';
                     continue;
@@ -154,13 +129,13 @@ class GarminHelper
             foreach ($day->getWorkouts() as $workoutKey => $workout) {
                 if ($day->getDate()) {
                     $formattedDate = $day->getDate()->format('Y-m-d');
-                    $data = json_encode(['date' => $formattedDate]);
+                    $data = ['date' => $formattedDate];
 
                     $messageID = ' is going to be scheduled on ';
 
                     if ($workout->getGarminID()) {
                         $this->client->scheduleWorkout($workout->getGarminID(), $data);
-                        $messageID = ' with id '  . $workout->getGarminID() .' was scheduled on the Garmin website for ';
+                        $messageID = ' with id '  . $workout->getGarminID() . ' was scheduled on the Garmin website for ';
                     }
                     $debugMessages[] = 'Workout - ' . $workout->getName() .  $messageID . $formattedDate;
                 }

@@ -6,7 +6,7 @@
         "ext-ctype": "*",
         "ext-iconv": "*",
         "ext-json": "*",
-        "dawguk/php-garmin-connect": "^1.7",
+        "ext-openssl": "*",
         "doctrine/collections": "^1.6",
         "league/csv": "^9.6",
         "symfony/console": "6.4.*",
