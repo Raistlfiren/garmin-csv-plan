@@ -135,7 +135,7 @@ abstract class AbstractHandler implements HandlerInterface
         $this->dispatcher->dispatch($event, HandlerEvents::CREATED_WORKOUTS_STARTED);
 
         $this->garminHelper->createWorkouts($workouts);
-        $this->garminHelper->attachNotes($workouts);
+//        $this->garminHelper->attachNotes($workouts);
 
         $debugMessages = $this->garminHelper->getDebugMessages();
 

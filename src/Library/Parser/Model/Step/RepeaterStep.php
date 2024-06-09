@@ -16,7 +16,7 @@ class RepeaterStep implements \JsonSerializable
     protected $order;
 
     /**
-     * @var float|null
+     * @var int|null
      */
     protected $garminID;
 
@@ -107,18 +107,18 @@ class RepeaterStep implements \JsonSerializable
     }
 
     /**
-     * @return float|null
+     * @return int|null
      */
-    public function getGarminID(): ?float
+    public function getGarminID(): ?int
     {
         return $this->garminID;
     }
 
     /**
-     * @param float|null $garminID
+     * @param int|null $garminID
      * @return RepeaterStep
      */
-    public function setGarminID(?float $garminID): RepeaterStep
+    public function setGarminID(?int $garminID): RepeaterStep
     {
         $this->garminID = $garminID;
         return $this;

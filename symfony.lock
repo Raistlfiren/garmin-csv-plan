@@ -1,7 +1,4 @@
 {
-    "dawguk/php-garmin-connect": {
-        "version": "v1.3.1"
-    },
     "doctrine/collections": {
         "version": "1.6.4"
     },
