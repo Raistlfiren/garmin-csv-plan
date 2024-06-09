@@ -15,7 +15,6 @@ class GarminClient
         private HttpClientInterface $client,
         private GarminAuthenticator $garminAuthenticator
     ) {
-        $this->setup();
     }
 
     public function addCredentials(string $username, string $password): void
@@ -40,6 +39,7 @@ class GarminClient
 
     public function fetchPersonalInformation(): array
     {
+        $this->setup();
         $response = $this->client->request('GET', self::GARMIN_API_URL . '/userprofile-service/userprofile/personal-information');
 
         return $response->toArray();
@@ -47,6 +47,7 @@ class GarminClient
 
     public function getWorkoutList($intStart = 0, $intLimit = 10, $myWorkoutsOnly = true, $sharedWorkoutsOnly = false)
     {
+        $this->setup();
         $queryParameters = array(
             'start' => $intStart,
             'limit' => $intLimit,
@@ -75,6 +76,7 @@ class GarminClient
 
     public function createWorkout($data)
     {
+        $this->setup();
         if (empty($data)) {
             throw new DataException('Data must be supplied to create a new workout.');
         }
@@ -113,6 +115,7 @@ class GarminClient
      */
     public function deleteWorkout($id)
     {
+        $this->setup();
         if (empty($id)) {
             throw new DataException('Workout ID must be supplied to delete a workout.');
         }
@@ -151,6 +154,7 @@ class GarminClient
      */
     public function scheduleWorkout($id, $data)
     {
+        $this->setup();
         $headers = [
             'NK: NT',
             'Content-Type: application/json'
