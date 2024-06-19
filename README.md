@@ -70,6 +70,9 @@ Specify a CSV file to create and delete workouts in Garmin connect and schedule 
 **You can remove the -m and -p flag by copying `.env` to `.env.local` AND updating the file with your username and password under 
 `GARMIN_USERNAME` and `GARMIN_PASSWORD`.**
 
+`GARMIN_AUTHENTICATION_FILE_PATH` in the `.env.local` file can be used to change the default path for the `garmin_credentials.json`. By default it is routed 
+to the default Symfony project directory.
+
 If you have pool workouts included in your plan, then you must specify the `--pool-size` option with the length of the pool. Ex.:
 25yds
 100m

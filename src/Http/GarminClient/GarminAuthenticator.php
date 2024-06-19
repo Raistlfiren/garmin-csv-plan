@@ -44,13 +44,20 @@ class GarminAuthenticator
         #[Autowire(env: 'GARMIN_PASSWORD')]
         private string $garminPassword,
         #[Autowire('%kernel.project_dir%')]
-        private readonly string $projectDirectory
+        private readonly string $projectDirectory,
+        #[Autowire(env: 'GARMIN_AUTHENTICATION_FILE_PATH')]
+        private readonly string $garminAuthenticationFilePath,
     ) {
     }
 
     public function authenticate()
     {
-        $filePath = $this->projectDirectory . DIRECTORY_SEPARATOR . self::GARMIN_AUTHENTICATION_FILE;
+        $directoryPath = $this->projectDirectory;
+        if (! empty($this->garminAuthenticationFilePath)) {
+            $directoryPath = $this->garminAuthenticationFilePath;
+        }
+
+        $filePath = $directoryPath . DIRECTORY_SEPARATOR . self::GARMIN_AUTHENTICATION_FILE;
 
         // Load file from path if it exists
         if (file_exists($filePath)) {
