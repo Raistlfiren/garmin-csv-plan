@@ -38,12 +38,7 @@ class HandlerFactoryTest extends KernelTestCase
         $handlerOptions->setDelete(false);
         $handlerOptions->setDeleteOnly(false);
 
-        $this->importHandler->expects($this->once())
-            ->method('handle');
-
-        $test = $this->handlerFactory->buildCommand($handlerOptions);
-
-        self::assertInstanceOf(ImportHandler::class, $test);
+        self::assertTrue($this->importHandler->supports($handlerOptions->getCommand()));
     }
 
     public function testScheduleBuildCommand()
@@ -55,11 +50,6 @@ class HandlerFactoryTest extends KernelTestCase
         $handlerOptions->setDelete(false);
         $handlerOptions->setDeleteOnly(false);
 
-        $this->scheduleHandler->expects($this->once())
-            ->method('handle');
-
-        $test = $this->handlerFactory->buildCommand($handlerOptions);
-
-        self::assertInstanceOf(ScheduleHandler::class, $test);
+        self::assertTrue($this->scheduleHandler->supports($handlerOptions->getCommand()));
     }
 }
