@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Tests\Library\Handler;
-
 
 use App\Library\Handler\HandlerFactory;
 use App\Library\Handler\HandlerOptions;
@@ -16,7 +14,7 @@ class HandlerFactoryTest extends KernelTestCase
     protected $importHandler;
     protected $scheduleHandler;
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $this->importHandler = $this->getMockBuilder(ImportHandler::class)
             ->disableOriginalConstructor()
@@ -41,8 +39,7 @@ class HandlerFactoryTest extends KernelTestCase
         $handlerOptions->setDeleteOnly(false);
 
         $this->importHandler->expects($this->once())
-            ->method('handle')
-            ->willReturn($this->importHandler);
+            ->method('handle');
 
         $test = $this->handlerFactory->buildCommand($handlerOptions);
 
@@ -59,8 +56,7 @@ class HandlerFactoryTest extends KernelTestCase
         $handlerOptions->setDeleteOnly(false);
 
         $this->scheduleHandler->expects($this->once())
-            ->method('handle')
-            ->willReturn($this->scheduleHandler);
+            ->method('handle');
 
         $test = $this->handlerFactory->buildCommand($handlerOptions);
 
