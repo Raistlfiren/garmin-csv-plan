@@ -9,14 +9,8 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class WorkoutCommandSubscriber implements EventSubscriberInterface
 {
-    /**
-     * @var SymfonyStyle
-     */
-    private $symfonyStyle;
-
-    public function __construct(SymfonyStyle $symfonyStyle)
+    public function __construct(private readonly \Symfony\Component\Console\Style\SymfonyStyle $symfonyStyle)
     {
-        $this->symfonyStyle = $symfonyStyle;
     }
 
     public static function getSubscribedEvents(): array
@@ -35,38 +29,38 @@ class WorkoutCommandSubscriber implements EventSubscriberInterface
         ];
     }
 
-    public function onCreatedWorkoutsEnded(HandlerEvent $event)
+    public function onCreatedWorkoutsEnded(HandlerEvent $event): void
     {
         $this->symfonyStyle->listing($event->getDebugMessages());
         $this->symfonyStyle->success('Workout import was successful.');
     }
 
-    public function onCreatedWorkoutsStarted(HandlerEvent $event)
+    public function onCreatedWorkoutsStarted(HandlerEvent $event): void
     {
         $this->symfonyStyle->section('Creating workouts');
     }
 
-    public function onDeleteWorkoutsEnded(HandlerEvent $event)
+    public function onDeleteWorkoutsEnded(HandlerEvent $event): void
     {
         $this->symfonyStyle->listing($event->getDebugMessages());
     }
 
-    public function onDeleteWorkoutsStarted(HandlerEvent $event)
+    public function onDeleteWorkoutsStarted(HandlerEvent $event): void
     {
         $this->symfonyStyle->section('Deleting old workouts');
     }
 
-    public function onFileValidationEnded(HandlerEvent $event)
+    public function onFileValidationEnded(HandlerEvent $event): void
     {
         $this->symfonyStyle->success('File valid');
     }
 
-    public function onFileValidationStarted(HandlerEvent $event)
+    public function onFileValidationStarted(HandlerEvent $event): void
     {
         $this->symfonyStyle->section('Validating and accessing - ' . $event->getHandlerOptions()->getPath());
     }
 
-    public function onParsingWorkoutsEnded(HandlerEvent $event)
+    public function onParsingWorkoutsEnded(HandlerEvent $event): void
     {
         $this->symfonyStyle->listing($event->getDebugMessages());
         $answer = $this->symfonyStyle->confirm('Does the following look correct?', true);
@@ -77,18 +71,18 @@ class WorkoutCommandSubscriber implements EventSubscriberInterface
         }
     }
 
-    public function onParsingWorkoutsStarted(HandlerEvent $event)
+    public function onParsingWorkoutsStarted(HandlerEvent $event): void
     {
         $this->symfonyStyle->section('Parsing Workouts');
     }
 
-    public function onSchedulingWorkoutsEnded(HandlerEvent $event)
+    public function onSchedulingWorkoutsEnded(HandlerEvent $event): void
     {
         $this->symfonyStyle->listing($event->getDebugMessages());
         $this->symfonyStyle->success('Workout scheduling and import was successful');
     }
 
-    public function onSchedulingWorkoutsStarted(HandlerEvent $event)
+    public function onSchedulingWorkoutsStarted(HandlerEvent $event): void
     {
         $this->symfonyStyle->section('Scheduling workouts');
     }

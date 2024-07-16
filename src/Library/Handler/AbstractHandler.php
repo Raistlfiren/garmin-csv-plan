@@ -33,34 +33,19 @@ abstract class AbstractHandler implements HandlerInterface
     protected $delete;
 
     /**
-     * @var Parser
-     */
-    protected $parser;
-
-    /**
      * @var GarminConnect   */
     protected $client;
-
-    /**
-     * @var EventDispatcherInterface
-     */
-    protected $dispatcher;
-
-    protected $garminHelper;
 
     protected $workouts;
 
     public function __construct(
-        Parser $parser,
-        EventDispatcherInterface $eventDispatcher,
-        GarminHelper $garminHelper
+        protected Parser $parser,
+        protected EventDispatcherInterface $dispatcher,
+        protected GarminHelper $garminHelper
     ) {
-        $this->parser = $parser;
-        $this->dispatcher = $eventDispatcher;
-        $this->garminHelper = $garminHelper;
     }
 
-    public function handle(HandlerOptions $handlerOptions)
+    public function handle(HandlerOptions $handlerOptions): void
     {
         // Validate the CSV file
         $this->validateFile($handlerOptions);
@@ -91,7 +76,7 @@ abstract class AbstractHandler implements HandlerInterface
         }
     }
 
-    public function validateFile(HandlerOptions $handlerOptions)
+    public function validateFile(HandlerOptions $handlerOptions): void
     {
         $event = new HandlerEvent($handlerOptions);
         $this->dispatcher->dispatch($event, HandlerEvents::FILE_VALIDATION_STARTED);
@@ -119,7 +104,7 @@ abstract class AbstractHandler implements HandlerInterface
         return $workouts;
     }
 
-    public function authenticatingToGarmin(HandlerOptions $handlerOptions)
+    public function authenticatingToGarmin(HandlerOptions $handlerOptions): void
     {
         $event = new HandlerEvent($handlerOptions);
         $this->dispatcher->dispatch($event, HandlerEvents::AUTHENTICATE_GARMIN_STARTED);
@@ -129,7 +114,7 @@ abstract class AbstractHandler implements HandlerInterface
         $this->dispatcher->dispatch($event, HandlerEvents::AUTHENTICATE_GARMIN_ENDED);
     }
 
-    public function createGarminWorkouts($handlerOptions, $workouts)
+    public function createGarminWorkouts($handlerOptions, $workouts): void
     {
         $event = new HandlerEvent($handlerOptions);
         $this->dispatcher->dispatch($event, HandlerEvents::CREATED_WORKOUTS_STARTED);
@@ -143,7 +128,7 @@ abstract class AbstractHandler implements HandlerInterface
         $this->dispatcher->dispatch($event, HandlerEvents::CREATED_WORKOUTS_ENDED);
     }
 
-    public function deleteGarminWorkouts($handlerOptions, $workouts)
+    public function deleteGarminWorkouts($handlerOptions, $workouts): void
     {
         $event = new HandlerEvent($handlerOptions);
         $this->dispatcher->dispatch($event, HandlerEvents::DELETE_WORKOUTS_STARTED);
@@ -165,10 +150,9 @@ abstract class AbstractHandler implements HandlerInterface
     }
 
     /**
-     * @param mixed $workouts
      * @return AbstractHandler
      */
-    public function setWorkouts($workouts)
+    public function setWorkouts(mixed $workouts)
     {
         $this->workouts = $workouts;
         return $this;

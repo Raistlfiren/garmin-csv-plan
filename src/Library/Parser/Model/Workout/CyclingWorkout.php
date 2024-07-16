@@ -4,12 +4,12 @@ namespace App\Library\Parser\Model\Workout;
 
 class CyclingWorkout extends AbstractWorkout
 {
-    protected function getSportTypeId()
+    protected function getSportTypeId(): int
     {
         return 2;
     }
 
-    protected function getSportTypeKey()
+    protected function getSportTypeKey(): string
     {
         return 'cycling';
     }

@@ -8,7 +8,7 @@ use DateTime;
 
 class ScheduleHandler extends AbstractHandler
 {
-    public function handle(HandlerOptions $handlerOptions)
+    public function handle(HandlerOptions $handlerOptions): void
     {
         parent::handle($handlerOptions);
 
@@ -23,7 +23,7 @@ class ScheduleHandler extends AbstractHandler
         $start = $this->timespan($totalWeeks, $start, $end);
 
         // Create a collection of workouts depending upon the day
-        $period = $this->parser->scheduleWorkouts($start, $this->getWorkouts());
+        $period = $this->parser->scheduleWorkouts($this->getWorkouts(), $start);
 
         //Check to see if this should be a dry run or delete only
         if (! $handlerOptions->getDryrun() || ! $handlerOptions->getDeleteOnly()) {
@@ -32,7 +32,7 @@ class ScheduleHandler extends AbstractHandler
         }
     }
 
-    public function scheduleWorkoutsOnGarmin(HandlerOptions $handlerOptions, array $days)
+    public function scheduleWorkoutsOnGarmin(HandlerOptions $handlerOptions, array $days): void
     {
         $event = new HandlerEvent($handlerOptions);
         $this->dispatcher->dispatch($event, HandlerEvents::SCHEDULING_WORKOUTS_STARTED);
@@ -45,21 +45,21 @@ class ScheduleHandler extends AbstractHandler
         $this->dispatcher->dispatch($event, HandlerEvents::SCHEDULING_WORKOUTS_ENDED);
     }
 
-    public function timespan($totalWeeks, DateTime $start = null, DateTime $end = null)
+    public function timespan($totalWeeks, DateTime $start = null, DateTime $end = null): ?\DateTime
     {
-        if ($start === null && $end === null) {
+        if (!$start instanceof \DateTime && !$end instanceof \DateTime) {
             throw new \Exception('Invalid timespan. Please provide a valid start and/or end date');
         }
 
         $daysModifier = $totalWeeks * 7;
 
-        if ($start && $end === null) {
+        if ($start && !$end instanceof \DateTime) {
             $modifiedDateTime = clone $start;
             $modifiedDateTime->modify('+' . $daysModifier . ' day');
             $end = $modifiedDateTime;
         }
 
-        if ($end && $start === null) {
+        if ($end && !$start instanceof \DateTime) {
             $modifiedDateTime = clone $end;
             $modifiedDateTime->modify('-' . $daysModifier . ' day');
             $start = $modifiedDateTime;
@@ -70,15 +70,14 @@ class ScheduleHandler extends AbstractHandler
 
     /**
      * @param string $date|null
-     * @return DateTime|null
      */
-    protected function convertStringToDate(string $date = null) : ?DateTime
+    protected function convertStringToDate(string $date = null): ?DateTime
     {
         $date = DateTime::createFromFormat('Y-m-d', $date ?? '');
-        return ($date ? $date : null);
+        return ($date ?: null);
     }
 
-    public function supports(string $command)
+    public function supports(string $command): bool
     {
         return $command === 'schedule';
     }

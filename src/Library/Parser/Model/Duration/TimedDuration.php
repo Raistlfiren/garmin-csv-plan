@@ -4,35 +4,36 @@ namespace App\Library\Parser\Model\Duration;
 
 class TimedDuration extends AbstractDuration
 {
-    const REGEX = '/^(\d{1,3}):(\d{2})$/';
+    public const REGEX = '/^(\d{1,3}):(\d{2})$/';
 
-    protected $minutes;
-
-    protected $seconds;
-
-    public static function testTimed($durationText)
+    public static function testTimed($durationText): false|\App\Library\Parser\Model\Duration\TimedDuration
     {
-        $result = $durationText && preg_match(self::REGEX, $durationText, $timed);
-
-        if ($result && isset($timed[1]) && isset($timed[2]) && (! empty($timed[1]) || ! empty($timed[2]))) {
-            return new TimedDuration($timed[1], $timed[2]);
+        $result = $durationText && preg_match(self::REGEX, (string) $durationText, $timed);
+        if (!$result) {
+            return false;
         }
-
-        return false;
+        if (!isset($timed[1])) {
+            return false;
+        }
+        if (!isset($timed[2])) {
+            return false;
+        }
+        if (empty($timed[1]) && empty($timed[2])) {
+            return false;
+        }
+        return new TimedDuration($timed[1], $timed[2]);
     }
 
-    public function __construct($minutes, $seconds)
+    public function __construct(protected $minutes, protected $seconds)
     {
-        $this->minutes = $minutes;
-        $this->seconds = $seconds;
     }
 
-    protected function getTypeKey()
+    protected function getTypeKey(): string
     {
         return 'time';
     }
 
-    protected function getTypeId()
+    protected function getTypeId(): int
     {
         return 2;
     }
@@ -42,7 +43,7 @@ class TimedDuration extends AbstractDuration
         return null;
     }
 
-    protected function getConditionValue()
+    protected function getConditionValue(): int|float
     {
         return $this->minutes * 60 + $this->seconds;
     }

@@ -4,7 +4,7 @@ namespace App\Library\Parser\Model\Swim;
 
 class EquipmentType implements \JsonSerializable
 {
-    const EQUIPMENT = [
+    public const EQUIPMENT = [
         'fins' => 'Fins',
         'kickboard' => 'Kickboard',
         'paddles' => 'Paddles',
@@ -12,17 +12,14 @@ class EquipmentType implements \JsonSerializable
         'snorkel' => 'Snorkel'
     ];
 
-    protected $equipmentKey;
-
-    protected $equipmentId;
-
-    public static function testEquipment($equipmentText)
+    public static function testEquipment($equipmentText): \App\Library\Parser\Model\Swim\EquipmentType
     {
         $counter = 1;
         foreach (self::EQUIPMENT as $key => $equipment) {
-            if (stripos($equipmentText, $equipment) !== false) {
+            if (stripos((string) $equipmentText, $equipment) !== false) {
                 return new EquipmentType($key, $counter);
             }
+
             $counter++;
         }
 
@@ -30,10 +27,8 @@ class EquipmentType implements \JsonSerializable
         return new EquipmentType(null, null);
     }
 
-    public function __construct($equipmentKey, $equipmentId)
+    public function __construct(protected $equipmentKey, protected $equipmentId)
     {
-        $this->equipmentKey = $equipmentKey;
-        $this->equipmentId = $equipmentId;
     }
 
     protected function getTypeKey()

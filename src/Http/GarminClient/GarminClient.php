@@ -9,11 +9,12 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 class GarminClient
 {
     public const GARMIN_API_URL = 'https://connectapi.garmin.com';
+
     public const USER_AGENT = 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148';
 
     public function __construct(
         private HttpClientInterface $client,
-        private GarminAuthenticator $garminAuthenticator
+        private readonly GarminAuthenticator $garminAuthenticator
     ) {
     }
 
@@ -48,12 +49,7 @@ class GarminClient
     public function getWorkoutList($intStart = 0, $intLimit = 10, $myWorkoutsOnly = true, $sharedWorkoutsOnly = false)
     {
         $this->setup();
-        $queryParameters = array(
-            'start' => $intStart,
-            'limit' => $intLimit,
-            'myWorkoutsOnly' => $myWorkoutsOnly,
-            'sharedWorkoutsOnly' => $sharedWorkoutsOnly
-        );
+        $queryParameters = ['start' => $intStart, 'limit' => $intLimit, 'myWorkoutsOnly' => $myWorkoutsOnly, 'sharedWorkoutsOnly' => $sharedWorkoutsOnly];
 
         $client = $this->client->withOptions(
             (new HttpOptions())
@@ -113,7 +109,7 @@ class GarminClient
      * @return mixed
      * @throws ClientException
      */
-    public function deleteWorkout($id)
+    public function deleteWorkout(?string $id)
     {
         $this->setup();
         if (empty($id)) {
@@ -152,7 +148,7 @@ class GarminClient
      * @return mixed
      * @throws ClientException
      */
-    public function scheduleWorkout($id, $data)
+    public function scheduleWorkout(?string $id, $data)
     {
         $this->setup();
         $headers = [

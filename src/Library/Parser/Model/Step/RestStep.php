@@ -4,12 +4,12 @@ namespace App\Library\Parser\Model\Step;
 
 class RestStep extends AbstractStep
 {
-    protected function getStepTypeId()
+    protected function getStepTypeId(): int
     {
         return 5;
     }
 
-    protected function getStepTypeKey()
+    protected function getStepTypeKey(): string
     {
         return 'rest';
     }

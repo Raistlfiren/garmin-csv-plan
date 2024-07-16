@@ -4,35 +4,39 @@ namespace App\Library\Parser\Model\Target;
 
 class HRCustomTarget extends AbstractTarget
 {
-    const REGEX = '/^(\d{1,3})\s*-\s*(\d{1,3})\s*bpm$/';
+    public const REGEX = '/^(\d{1,3})\s*-\s*(\d{1,3})\s*bpm$/';
 
-    protected $from;
-
-    protected $to;
-
-    public static function testHR($hrText)
+    public static function testHR($hrText): false|\App\Library\Parser\Model\Target\HRCustomTarget
     {
-        $result = $hrText && preg_match(self::REGEX, $hrText, $hr);
-
-        if ($result && isset($hr[1]) && ! empty($hr[1]) && isset($hr[2]) && ! empty($hr[2])) {
-            return new HRCustomTarget($hr[1], $hr[2]);
+        $result = $hrText && preg_match(self::REGEX, (string) $hrText, $hr);
+        if (!$result) {
+            return false;
         }
-
-        return false;
+        if (!isset($hr[1])) {
+            return false;
+        }
+        if (empty($hr[1])) {
+            return false;
+        }
+        if (!isset($hr[2])) {
+            return false;
+        }
+        if (empty($hr[2])) {
+            return false;
+        }
+        return new HRCustomTarget($hr[1], $hr[2]);
     }
 
-    public function __construct($from, $to)
+    public function __construct(protected $from, protected $to)
     {
-        $this->from = $from;
-        $this->to = $to;
     }
 
-    protected function getTypeId()
+    protected function getTypeId(): int
     {
         return 4;
     }
 
-    protected function getTypeKey()
+    protected function getTypeKey(): string
     {
         return 'heart.rate.zone';
     }

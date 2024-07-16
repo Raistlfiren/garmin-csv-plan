@@ -6,41 +6,45 @@ use App\Library\Parser\Helper\DistanceUnit;
 
 class DistanceDuration extends AbstractDuration
 {
-    const REGEX = '/^(\d+(.\d+)?)\s*(km|mi|m|yds)$/';
+    public const REGEX = '/^(\d+(.\d+)?)\s*(km|mi|m|yds)$/';
 
-    protected $distance;
-
-    protected $type;
-
-    public static function testDistance($durationText)
+    public static function testDistance($durationText): false|\App\Library\Parser\Model\Duration\DistanceDuration
     {
-        $result = $durationText && preg_match(self::REGEX, $durationText, $distance);
-
-        if ($result && isset($distance[1]) && ! empty($distance[1]) && isset($distance[3]) && ! empty($distance[3])) {
-            return new DistanceDuration($distance[1], $distance[3]);
+        $result = $durationText && preg_match(self::REGEX, (string) $durationText, $distance);
+        if (!$result) {
+            return false;
         }
-
-        return false;
+        if (!isset($distance[1])) {
+            return false;
+        }
+        if (empty($distance[1])) {
+            return false;
+        }
+        if (!isset($distance[3])) {
+            return false;
+        }
+        if (empty($distance[3])) {
+            return false;
+        }
+        return new DistanceDuration($distance[1], $distance[3]);
     }
 
-    public function __construct($distance, $type)
+    public function __construct(protected $distance, protected $type)
     {
-        $this->distance = $distance;
-        $this->type = $type;
     }
 
 
-    protected function getTypeKey()
+    protected function getTypeKey(): string
     {
         return 'distance';
     }
 
-    protected function getTypeId()
+    protected function getTypeId(): int
     {
         return 3;
     }
 
-    protected function getPreferredEndConditionUnit()
+    protected function getPreferredEndConditionUnit(): array
     {
         return ['unitKey' => DistanceUnit::getFullName($this->type)];
     }

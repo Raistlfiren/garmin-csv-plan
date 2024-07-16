@@ -9,10 +9,15 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 class GarminAuthenticator
 {
     public const GARTH_SSO_TOKENS = 'https://thegarth.s3.amazonaws.com/oauth_consumer.json';
+
     public const GARMIN_SSO_URL = 'https://sso.garmin.com/sso';
+
     public const GARMIN_SSO_EMBED_URL = self::GARMIN_SSO_URL . '/embed';
+
     public const GARMIN_SSO_SIGN_IN_URL = self::GARMIN_SSO_URL . '/signin';
+
     public const GARMIN_SSO_MFA_URL = self::GARMIN_SSO_URL . '/verifyMFA/loginEnterMfaCode';
+
     public const GARMIN_AUTHENTICATION_FILE = 'garmin_credentials.json';
 
     public const GARMIN_DEFAULT_PARAMETERS  = [
@@ -35,10 +40,11 @@ class GarminAuthenticator
     ];
 
     protected string $consumerKey = '';
+
     protected string $consumerSecret = '';
 
     public function __construct(
-        private HttpClientInterface $httpClient,
+        private readonly HttpClientInterface $httpClient,
         #[Autowire(env: 'GARMIN_USERNAME')]
         private string $garminUsername,
         #[Autowire(env: 'GARMIN_PASSWORD')]
@@ -61,6 +67,7 @@ class GarminAuthenticator
                 // Great the access token isn't expired so lets reuse it from the file
                 return $oauthData['access_token'];
             }
+
             // Access token must be expired so lets refresh it
             if ($oauthData['refresh_token_expires_at'] < time()) {
                 $oauthData = $this->exchangeOauth1TokenForOauth2Token($oauthData['token'], $oauthData['token_secret']);
@@ -180,7 +187,7 @@ class GarminAuthenticator
 
         $oauth1Body = $response->getContent();
 
-        parse_str($oauth1Body, $oauthResponseBody);
+        parse_str((string) $oauth1Body, $oauthResponseBody);
 
         return $oauthResponseBody;
     }

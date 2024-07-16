@@ -22,17 +22,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 )]
 class TestCommand extends Command
 {
-    /**
-     * @var HandlerFactory
-     */
-    private $handlerFactory;
-
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $dispatcher;
-
-    public function __construct(private GarminClient $garminClient)
+    public function __construct(private readonly GarminClient $garminClient)
     {
         parent::__construct();
     }

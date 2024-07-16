@@ -23,5 +23,6 @@ class TargetFactory
         if ($hrCustomTarget) {
             return $hrCustomTarget;
         }
+        return null;
     }
 }

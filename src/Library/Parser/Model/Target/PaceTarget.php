@@ -6,19 +6,15 @@ use App\Library\Parser\Helper\DistanceUnit;
 
 class PaceTarget extends AbstractTarget
 {
-    const REGEX = '/^(\d{1,2}:\d{2})\s*-\s*(\d{1,2}:\d{2})\s*(mpk|mpm)?$/';
-
-    protected $from;
-
-    protected $to;
+    public const REGEX = '/^(\d{1,2}:\d{2})\s*-\s*(\d{1,2}:\d{2})\s*(mpk|mpm)?$/';
 
     protected $uom;
 
     protected $metric;
 
-    public static function testPace($paceText)
+    public static function testPace($paceText): \App\Library\Parser\Model\Target\PaceTarget|false
     {
-        $result = $paceText && preg_match(self::REGEX, $paceText, $pace);
+        $result = $paceText && preg_match(self::REGEX, (string) $paceText, $pace);
 
         if ($result && isset($pace[1]) && ! empty($pace[1]) && isset($pace[2]) && ! empty($pace[2])) {
             $from = $pace[1];
@@ -35,19 +31,17 @@ class PaceTarget extends AbstractTarget
         return false;
     }
 
-    public function __construct($from, $to, $uom)
+    public function __construct(protected $from, protected $to, $uom)
     {
-        $this->from = $from;
-        $this->to = $to;
         $this->uom = DistanceUnit::DISTANCE[$uom];
     }
 
-    protected function getTypeId()
+    protected function getTypeId(): int
     {
         return 6;
     }
 
-    protected function getTypeKey()
+    protected function getTypeKey(): string
     {
         return 'pace.zone';
     }
@@ -62,12 +56,12 @@ class PaceTarget extends AbstractTarget
         return $this->handlePace($this->to);
     }
 
-    protected function handlePace($time)
+    protected function handlePace($time): float
     {
         $minutes = 0;
         $seconds = 0;
 
-        $timeArray = explode(':', $time);
+        $timeArray = explode(':', (string) $time);
 
         if (isset($timeArray[0]) && ! empty($timeArray[0])) {
             $minutes = trim($timeArray[0]);

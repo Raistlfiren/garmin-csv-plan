@@ -23,7 +23,7 @@ class Parser
      * @param $path
      * @return bool
      */
-    public function isValidFile($path)
+    public function isValidFile(string $path)
     {
         $addToPath = [DIRECTORY_SEPARATOR, '..', DIRECTORY_SEPARATOR, '..', DIRECTORY_SEPARATOR, '..', DIRECTORY_SEPARATOR];
         $fullPath = __DIR__ . implode('', $addToPath) . $path;
@@ -46,15 +46,12 @@ class Parser
         return $this->records;
     }
 
-    public function getTotalWeeks()
+    public function getTotalWeeks(): int
     {
         return count($this->records);
     }
 
-    /**
-     * @return array
-     */
-    public function findAllWorkouts($prefix = null, $poolSize = null)
+    public function findAllWorkouts($prefix = null, $poolSize = null): array
     {
         $workouts = [];
 
@@ -91,9 +88,12 @@ class Parser
         return array_unique($workouts);
     }
 
-    protected function splitWorkoutText($workoutText)
+    /**
+     * @return string[]
+     */
+    protected function splitWorkoutText($workoutText): array
     {
-        $splitLines = explode("\n", $workoutText);
+        $splitLines = explode("\n", (string) $workoutText);
 
         $headers = $this->parseMultiWorkouts($workoutText);
 
@@ -111,15 +111,12 @@ class Parser
                     foreach ($splitLines as $line) {
                         $individualWorkoutText .= $line . "\n";
                     }
-
                     $workoutGroups[] = $individualWorkoutText;
-
-                // Must be last workout in set
-                } else if ($workoutCounterMax === ($workoutCounter + 1)) {
+                    // Must be last workout in set
+                } elseif ($workoutCounterMax === ($workoutCounter + 1)) {
                     foreach ($splitLines as $line) {
                         $individualWorkoutText .= $line . "\n";
                     }
-
                     $workoutGroups[] = $individualWorkoutText;
                 } else {
                     $nextIndex = $workoutKeys[($workoutCounter + 1)] - $workoutKeys[$workoutCounter];
@@ -139,7 +136,7 @@ class Parser
         return $workoutGroups;
     }
 
-    public function scheduleWorkouts(DateTime $startDate = null, $workouts)
+    public function scheduleWorkouts($workouts, DateTime $startDate = null): \App\Library\Parser\Model\PeriodCollection
     {
         $period = new PeriodCollection();
         $debugCounter = 0;
@@ -153,7 +150,7 @@ class Parser
                 $entityDay = new Day();
                 $this->debugMessages[$debugCounter] = '';
 
-                if ($startDate) {
+                if ($startDate instanceof \DateTime) {
                     $entityDay->setDate(clone $startDate);
                     $this->debugMessages[$debugCounter] = $startDate->format('Y-m-d') . ' - ';
                     //Increment date by 1...
@@ -177,6 +174,7 @@ class Parser
                     // Remove /n/t/... from workout name
                     $workoutNames[] = trim($record[$day] ?? '');
                 }
+
 //                $foundWorkout = null;
 
 
@@ -194,6 +192,7 @@ class Parser
                 }
 
             }
+
             $period->addWeek($week);
         }
 
@@ -204,7 +203,7 @@ class Parser
     {
         // Generates regex - /^(running|cycling|swimming|etc...)?:/
         $regex = '/(' . implode('|',WorkoutTypes::WORKOUTS) . ')/';
-        $result = preg_grep($regex, explode("\n", $workoutText));
+        $result = preg_grep($regex, explode("\n", (string) $workoutText));
 
         if ($result) {
             return $result;
@@ -213,32 +212,40 @@ class Parser
         return null;
     }
 
-    public function parseWorkoutType($workoutText)
+    public function parseWorkoutType($workoutText): ?string
     {
         // Generates regex - /^(running|cycling|swimming|etc...)?:/
         $regex = '/^(' . implode('|',WorkoutTypes::WORKOUTS) . ')?:/';
-        $result = $workoutText && preg_match($regex, $workoutText, $workoutType);
-
-        if ($result && isset($workoutType[1]) && ! empty($workoutType[1])) {
-            return trim($workoutType[1]);
+        $result = $workoutText && preg_match($regex, (string) $workoutText, $workoutType);
+        if (!$result) {
+            return null;
         }
-
-        return null;
+        if (!isset($workoutType[1])) {
+            return null;
+        }
+        if (empty($workoutType[1])) {
+            return null;
+        }
+        return trim($workoutType[1]);
     }
 
-    public function parseWorkoutName($workoutText)
+    public function parseWorkoutName($workoutText): ?string
     {
         $regex = '/:\s{1,}(.*)/';
-        $result = $workoutText && preg_match($regex, $workoutText, $workoutName);
-
-        if ($result && isset($workoutName[1]) && ! empty($workoutName[1])) {
-            return trim($workoutName[1]);
+        $result = $workoutText && preg_match($regex, (string) $workoutText, $workoutName);
+        if (!$result) {
+            return null;
         }
-
-        return null;
+        if (!isset($workoutName[1])) {
+            return null;
+        }
+        if (empty($workoutName[1])) {
+            return null;
+        }
+        return trim($workoutName[1]);
     }
 
-    public function removeFirstLine($workoutText)
+    public function removeFirstLine($workoutText): string|array|null
     {
         $regex = '/^.+\n?/';
 
@@ -249,13 +256,17 @@ class Parser
     {
         $regex = '/^(\s*-.*)$/m';
 
-        $result = preg_match_all($regex, $stepsText, $steps);
-
-        if ($result && isset($steps[0]) && ! empty($steps[0])) {
-            return $steps[0];
+        $result = preg_match_all($regex, (string) $stepsText, $steps);
+        if (!$result) {
+            return null;
         }
-
-        return null;
+        if (!isset($steps[0])) {
+            return null;
+        }
+        if (empty($steps[0])) {
+            return null;
+        }
+        return $steps[0];
     }
 
     public function parseWorkout($workoutText, $poolSize = null)

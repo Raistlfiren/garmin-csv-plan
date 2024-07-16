@@ -19,21 +19,24 @@ class GarminHelper
 
     public function createGarminClient($username, $password): void
     {
-        if (! empty($username) && ! empty($password)) {
-            // Set user credentials based on what is added as an argument to command prompt
-            $this->client->addCredentials($username, $password);
+        if (empty($username)) {
+            return;
         }
+        if (empty($password)) {
+            return;
+        }
+        // Set user credentials based on what is added as an argument to command prompt
+        $this->client->addCredentials($username, $password);
     }
 
-    public function createWorkouts(array $workouts)
+    public function createWorkouts(array $workouts): void
     {
         $debugMessages = [];
 
-        /** @var Day $day */
         $workoutList = [];
 
         /** @var AbstractWorkout $workout */
-        foreach ($workouts as $workoutKey => $workout) {
+        foreach ($workouts as $workout) {
             $workoutName = $workout->getName();
             // same workout name already created?
             if ($workoutID = array_search($workoutName, $workoutList, true)) {
@@ -53,6 +56,7 @@ class GarminHelper
                 foreach ($workoutSteps as $index => $workoutStep) {
                     $allSteps[$index]->setGarminID($workoutStep['id']);
                 }
+
                 $workout->setGarminID($response->workoutId);
                 $workoutList[$response->workoutId] = $workoutName;
                 $debugMessages[] = 'Workout - ' . $workoutName . ' was created on the Garmin website with the id ' . $workoutID;
@@ -62,7 +66,7 @@ class GarminHelper
         $this->setDebugMessages($debugMessages);
     }
 
-    public function deleteWorkouts(array $workouts)
+    public function deleteWorkouts(array $workouts): void
     {
         $debugMessages = [];
 
@@ -87,7 +91,7 @@ class GarminHelper
         foreach ($workoutNames as $workoutName) {
             foreach ($workoutList as $workoutKey => $workout) {
                 //Delete all workouts that contain the workout name
-                if (strpos($workout, $workoutName) !== false) {
+                if (str_contains((string) $workout, (string) $workoutName)) {
                     $this->client->deleteWorkout($workoutKey);
                     unset($workoutList[$workoutKey]);
                     $debugMessages[] = 'Workout - ' . $workoutName . ' with id ' . $workoutKey . ' was deleted from the Garmin website.';
@@ -98,7 +102,7 @@ class GarminHelper
         $this->setDebugMessages($debugMessages);
     }
 
-    public function attachNotes($workouts)
+    public function attachNotes($workouts): void
     {
         $stepsWithNotes = [];
 
@@ -119,14 +123,14 @@ class GarminHelper
         }
     }
 
-    public function scheduleWorkouts(array $days)
+    public function scheduleWorkouts(array $days): void
     {
         $debugMessages = [];
 
         /** @var Day $day */
         foreach ($days as $day) {
             /** @var AbstractWorkout $workout */
-            foreach ($day->getWorkouts() as $workoutKey => $workout) {
+            foreach ($day->getWorkouts() as $workout) {
                 if ($day->getDate()) {
                     $formattedDate = $day->getDate()->format('Y-m-d');
                     $data = ['date' => $formattedDate];
@@ -137,6 +141,7 @@ class GarminHelper
                         $this->client->scheduleWorkout($workout->getGarminID(), $data);
                         $messageID = ' with id '  . $workout->getGarminID() . ' was scheduled on the Garmin website for ';
                     }
+
                     $debugMessages[] = 'Workout - ' . $workout->getName() .  $messageID . $formattedDate;
                 }
             }

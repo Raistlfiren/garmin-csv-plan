@@ -21,21 +21,10 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 )]
 class WorkoutCommand extends Command
 {
-    /**
-     * @var HandlerFactory
-     */
-    private $handlerFactory;
-
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $dispatcher;
-
-    public function __construct(HandlerFactory $handlerFactory, EventDispatcherInterface $dispatcher)
-    {
-        $this->handlerFactory = $handlerFactory;
-        $this->dispatcher = $dispatcher;
-
+    public function __construct(
+        private readonly HandlerFactory $handlerFactory,
+        private readonly EventDispatcherInterface $dispatcher
+    ) {
         parent::__construct();
     }
 
@@ -75,11 +64,9 @@ or import **AND** schedule the workouts.', 'import')
         $start = $input->getOption('start');
         $end = $input->getOption('end');
 
-        if ($command === 'import') {
-            if (! empty($start) || ! empty($end)) {
-                $io->error('You supplied the START and/or END date for scheduling workouts on a calendar, but IMPORT was specified for the command type. Please specify the schedule argument when running the command. For example - ./bin/console garmin:workout <file>.csv schedule -s <date>');
-                return Command::SUCCESS;
-            }
+        if ($command === 'import' && (! empty($start) || ! empty($end))) {
+            $io->error('You supplied the START and/or END date for scheduling workouts on a calendar, but IMPORT was specified for the command type. Please specify the schedule argument when running the command. For example - ./bin/console garmin:workout <file>.csv schedule -s <date>');
+            return Command::SUCCESS;
         }
 
         $handlerOptions = new HandlerOptions();
@@ -88,7 +75,7 @@ or import **AND** schedule the workouts.', 'import')
         $handlerOptions->setPrefix($prefix);
         $handlerOptions->setDryrun($dryrun);
         $handlerOptions->setPoolSize($poolSize);
-        $handlerOptions->setDelete($delete||$deleteOnly);
+        $handlerOptions->setDelete($delete || $deleteOnly);
         $handlerOptions->setDeleteOnly($deleteOnly);
         $handlerOptions->setPath($path);
         $handlerOptions->setStartDate($start);

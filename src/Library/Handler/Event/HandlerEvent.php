@@ -7,39 +7,20 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class HandlerEvent extends Event
 {
-    /**
-     * @var HandlerOptions
-     */
-    private $handlerOptions;
+    private ?bool $stop = null;
 
     /**
-     * @var string|null
+     * @param string|null $debugMessages
      */
-    private $debugMessages;
-
-    /**
-     * @var bool|null
-     */
-    private $stop;
-
-    public function __construct(HandlerOptions $handlerOptions, $debugMessages = null)
+    public function __construct(private HandlerOptions $handlerOptions, private $debugMessages = null)
     {
-        $this->handlerOptions = $handlerOptions;
-        $this->debugMessages = $debugMessages;
     }
 
-    /**
-     * @return HandlerOptions
-     */
     public function getHandlerOptions(): HandlerOptions
     {
         return $this->handlerOptions;
     }
 
-    /**
-     * @param HandlerOptions $handlerOptions
-     * @return HandlerEvent
-     */
     public function setHandlerOptions(HandlerOptions $handlerOptions): HandlerEvent
     {
         $this->handlerOptions = $handlerOptions;
@@ -56,26 +37,18 @@ class HandlerEvent extends Event
 
     /**
      * @param null $debugMessages
-     * @return HandlerEvent
      */
-    public function setDebugMessages($debugMessages)
+    public function setDebugMessages($debugMessages): static
     {
         $this->debugMessages = $debugMessages;
         return $this;
     }
 
-    /**
-     * @return bool|null
-     */
     public function getStop(): ?bool
     {
         return $this->stop;
     }
 
-    /**
-     * @param bool|null $stop
-     * @return HandlerEvent
-     */
     public function setStop(?bool $stop): HandlerEvent
     {
         $this->stop = $stop;

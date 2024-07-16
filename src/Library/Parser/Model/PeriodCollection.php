@@ -11,7 +11,10 @@ class PeriodCollection extends ArrayCollection
     /** @var array $weeks */
     protected $weeks;
 
-    public function getWorkouts()
+    /**
+     * @return mixed[]
+     */
+    public function getWorkouts(): array
     {
         $workouts = [];
 
@@ -32,7 +35,7 @@ class PeriodCollection extends ArrayCollection
     /**
      * @return AbstractStep[]
      */
-    public function getStepsWithNotes()
+    public function getStepsWithNotes(): array
     {
         $steps = [];
 
@@ -54,7 +57,10 @@ class PeriodCollection extends ArrayCollection
         return $steps;
     }
 
-    public function getDays()
+    /**
+     * @return mixed[]
+     */
+    public function getDays(): array
     {
         $days = [];
 
@@ -69,26 +75,17 @@ class PeriodCollection extends ArrayCollection
         return $days;
     }
 
-    /**
-     * @return array
-     */
     public function getWeeks(): array
     {
         return $this->weeks;
     }
 
-    /**
-     * @param array $weeks
-     */
     public function setWeeks(array $weeks): void
     {
         $this->weeks = $weeks;
     }
 
-    /**
-     * @param mixed $week
-     */
-    public function addWeek($week)
+    public function addWeek(mixed $week): void
     {
         $this->weeks[] = $week;
     }

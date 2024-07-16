@@ -4,7 +4,7 @@ namespace App\Library\Parser\Helper;
 
 class DistanceUnit
 {
-    const DISTANCE = [
+    public const DISTANCE = [
         'km' => [
             'name' => 'kilometer',
             'toMeters' => 1000
@@ -24,45 +24,45 @@ class DistanceUnit
         ]
     ];
 
-    public static function getFullName($shortName)
+    public static function getFullName($shortName): ?string
     {
         if (self::isValid($shortName)) {
             $attributes = self::DISTANCE[$shortName];
 
             return $attributes['name'];
         }
+        return null;
     }
 
-    public static function convertToMeters($shortName, $distance)
+    public static function convertToMeters($shortName, $distance): int|float|null
     {
         if (self::isValid($shortName)) {
             $attributes = self::DISTANCE[$shortName];
 
             return $attributes['toMeters'] * $distance;
         }
+        return null;
     }
 
-    public static function withPaceUOM($shortName)
+    public static function withPaceUOM($shortName): ?string
     {
-        switch ($shortName) {
-            case 'mpk':
-                return 'km';
-            case 'mpm':
-                return 'mi';
-        }
+        return match ($shortName) {
+            'mpk' => 'km',
+            'mpm' => 'mi',
+            default => null,
+        };
     }
 
-    public static function withSpeedUOM($shortName)
+    public static function withSpeedUOM($shortName): ?string
     {
-        switch ($shortName) {
-            case 'kph':
-                return 'km';
-            case 'mph':
-                return 'mi';
-        }
+        return match ($shortName) {
+            'kph' => 'km',
+            'mph' => 'mi',
+            default => null,
+        };
     }
 
-    public static function isValid($shortName)
+    public static function isValid(string $shortName)
     {
         if (array_key_exists($shortName, self::DISTANCE)) {
             return true;

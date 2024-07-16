@@ -6,20 +6,11 @@ use DateTime;
 
 class HandlerOptions
 {
-    /**
-     * @var string
-     */
-    private $path;
+    private ?string $path = null;
 
-    /**
-     * @var string|null
-     */
-    private $email;
+    private ?string $email = null;
 
-    /**
-     * @var string|null
-     */
-    private $password;
+    private ?string $password = null;
 
     /**
      * @var bool|false
@@ -41,15 +32,9 @@ class HandlerOptions
      */
     private $endDate;
 
-    /**
-     * @var string
-     */
-    private $command;
+    private ?string $command = null;
 
-    /**
-     * @var string|null
-     */
-    private $prefix;
+    private ?string $prefix = null;
 
     /**
      * @var bool|false
@@ -61,54 +46,33 @@ class HandlerOptions
      */
     protected $poolSize;
 
-    /**
-     * @return string
-     */
     public function getPath(): string
     {
         return $this->path;
     }
 
-    /**
-     * @param string $path
-     * @return HandlerOptions
-     */
     public function setPath(string $path): HandlerOptions
     {
         $this->path = $path;
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getEmail(): ?string
     {
         return $this->email;
     }
 
-    /**
-     * @param string|null $email
-     * @return HandlerOptions
-     */
     public function setEmail(?string $email): HandlerOptions
     {
         $this->email = $email;
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getPassword(): ?string
     {
         return $this->password;
     }
 
-    /**
-     * @param string|null $password
-     * @return HandlerOptions
-     */
     public function setPassword(?string $password): HandlerOptions
     {
         $this->password = $password;
@@ -125,9 +89,8 @@ class HandlerOptions
 
     /**
      * @param bool|false $delete
-     * @return HandlerOptions
      */
-    public function setDelete($delete)
+    public function setDelete($delete): static
     {
         $this->delete = $delete;
         return $this;
@@ -143,9 +106,8 @@ class HandlerOptions
 
     /**
      * @param bool|false $deleteOnly
-     * @return HandlerOptions
      */
-    public function setDeleteOnly($deleteOnly)
+    public function setDeleteOnly($deleteOnly): static
     {
         $this->deleteOnly = $deleteOnly;
         return $this;
@@ -161,9 +123,8 @@ class HandlerOptions
 
     /**
      * @param DateTime|string|null $startDate
-     * @return HandlerOptions
      */
-    public function setStartDate($startDate)
+    public function setStartDate($startDate): static
     {
         $this->startDate = $startDate;
         return $this;
@@ -179,44 +140,29 @@ class HandlerOptions
 
     /**
      * @param DateTime|string|null $endDate
-     * @return HandlerOptions
      */
-    public function setEndDate($endDate)
+    public function setEndDate($endDate): static
     {
         $this->endDate = $endDate;
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getCommand(): string
     {
         return $this->command;
     }
 
-    /**
-     * @param string $command
-     * @return HandlerOptions
-     */
     public function setCommand(string $command): HandlerOptions
     {
         $this->command = $command;
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getPrefix(): ?string
     {
         return $this->prefix;
     }
 
-    /**
-     * @param string|null $prefix
-     * @return HandlerOptions
-     */
     public function setPrefix(?string $prefix): HandlerOptions
     {
         $this->prefix = $prefix;
@@ -233,26 +179,18 @@ class HandlerOptions
 
     /**
      * @param bool|false $dryrun
-     * @return HandlerOptions
      */
-    public function setDryrun($dryrun)
+    public function setDryrun($dryrun): static
     {
         $this->dryrun = $dryrun;
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getPoolSize(): ?string
     {
         return $this->poolSize;
     }
 
-    /**
-     * @param string|null $poolSize
-     * @return HandlerOptions
-     */
     public function setPoolSize(?string $poolSize): HandlerOptions
     {
         $this->poolSize = $poolSize;

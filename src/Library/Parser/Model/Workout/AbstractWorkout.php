@@ -7,17 +7,14 @@ use App\Library\Parser\Model\Step\RepeaterStep;
 use App\Library\Parser\Model\Step\StepFactory;
 use Doctrine\Common\Collections\ArrayCollection;
 
-abstract class AbstractWorkout implements \JsonSerializable
+abstract class AbstractWorkout implements \JsonSerializable, \Stringable
 {
+    public $poolSizeLength;
+    public $poolSizeUnit;
     /**
      * @var ArrayCollection|[]
      */
     protected $steps;
-
-    /**
-     * @var string|null
-     */
-    protected $name;
 
     /**
      * @var string|null
@@ -29,15 +26,16 @@ abstract class AbstractWorkout implements \JsonSerializable
      */
     protected $garminID;
 
-    public function __construct($name)
+    /**
+     * @param string|null $name
+     */
+    public function __construct(protected $name)
     {
-        $this->name = $name;
         $this->steps = new ArrayCollection();
     }
 
     public function steps($steps, $swimming = false)
     {
-        $repeaterStep = null;
         $repStep = [];
 
         foreach ($steps as $index => $step) {
@@ -65,7 +63,7 @@ abstract class AbstractWorkout implements \JsonSerializable
         return $this;
     }
 
-    public function parseStepResult($whitespaceCount, $repeater, $header, $parameters, $notes, $index)
+    public function parseStepResult($whitespaceCount, $repeater, $header, $parameters, $notes, $index): void
     {
         if ($header === 'repeat') {
             $repeaterStep = new RepeaterStep($parameters, $index);
@@ -77,7 +75,7 @@ abstract class AbstractWorkout implements \JsonSerializable
     {
         $regex = '/.+?(?=-)/';
 
-        $result = $stepText && preg_match($regex, $stepText, $whiteText);
+        $result = $stepText && preg_match($regex, (string) $stepText, $whiteText);
 
         return $result && isset($whiteText[0]) ? strlen($whiteText[0]) : 0;
     }
@@ -86,7 +84,7 @@ abstract class AbstractWorkout implements \JsonSerializable
     {
         $regex = '/^\s{1,}-.*$/';
 
-        $result = $stepText && preg_match($regex, $stepText, $stepHeader);
+        $result = $stepText && preg_match($regex, (string) $stepText, $stepHeader);
 
         return $result && isset($stepHeader[0]) && ! empty($stepHeader[0]);
     }
@@ -94,37 +92,49 @@ abstract class AbstractWorkout implements \JsonSerializable
     public function parseStepHeader($stepText)
     {
         $regex = '/-\s*([^:]*)/';
-        $result = $stepText && preg_match($regex, $stepText, $stepHeader);
-
-        if ($result && isset($stepHeader[1]) && ! empty($stepHeader[1])) {
-            return trim($stepHeader[1]);
+        $result = $stepText && preg_match($regex, (string) $stepText, $stepHeader);
+        if (!$result) {
+            return null;
         }
-
-        return null;
+        if (!isset($stepHeader[1])) {
+            return null;
+        }
+        if (empty($stepHeader[1])) {
+            return null;
+        }
+        return trim($stepHeader[1]);
     }
 
     public function parseStepDetails($stepText)
     {
         $regex = '/:\s*([^;]*)/';
-        $result = $stepText && preg_match($regex, $stepText, $stepDetails);
-
-        if ($result && isset($stepDetails[1]) && ! empty($stepDetails[1])) {
-            return trim($stepDetails[1]);
+        $result = $stepText && preg_match($regex, (string) $stepText, $stepDetails);
+        if (!$result) {
+            return null;
         }
-
-        return null;
+        if (!isset($stepDetails[1])) {
+            return null;
+        }
+        if (empty($stepDetails[1])) {
+            return null;
+        }
+        return trim($stepDetails[1]);
     }
 
     public function parseStepNotes($stepText)
     {
         $regex = '/;\s*(.*)/';
-        $result = $stepText && preg_match($regex, $stepText, $stepNotes);
-
-        if ($result && isset($stepNotes[1]) && ! empty($stepNotes[1])) {
-            return trim($stepNotes[1]);
+        $result = $stepText && preg_match($regex, (string) $stepText, $stepNotes);
+        if (!$result) {
+            return null;
         }
-
-        return null;
+        if (!isset($stepNotes[1])) {
+            return null;
+        }
+        if (empty($stepNotes[1])) {
+            return null;
+        }
+        return trim($stepNotes[1]);
     }
 
     abstract protected function getSportTypeId();
@@ -169,72 +179,44 @@ abstract class AbstractWorkout implements \JsonSerializable
         return array_merge($workout, $swimming);
     }
 
-    /**
-     * @return ArrayCollection
-     */
     public function getSteps(): ArrayCollection
     {
         return $this->steps;
     }
 
-    /**
-     * @param ArrayCollection $steps
-     * @return AbstractWorkout
-     */
     public function setSteps(ArrayCollection $steps): AbstractWorkout
     {
         $this->steps = $steps;
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getName(): ?string
     {
         return $this->name;
     }
 
-    /**
-     * @param string|null $name
-     * @return AbstractWorkout
-     */
     public function setName(?string $name): AbstractWorkout
     {
         $this->name = $name;
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
     public function getGarminID(): ?int
     {
         return $this->garminID;
     }
 
-    /**
-     * @return string|null
-     */
     public function getPrefix(): ?string
     {
         return $this->prefix;
     }
 
-    /**
-     * @param string|null $prefix
-     * @return AbstractWorkout
-     */
     public function setPrefix(?string $prefix): AbstractWorkout
     {
         $this->prefix = $prefix;
         return $this;
     }
 
-    /**
-     * @param int|null $garminID
-     * @return AbstractWorkout
-     */
     public function setGarminID(?int $garminID): AbstractWorkout
     {
         $this->garminID = $garminID;
@@ -258,8 +240,8 @@ abstract class AbstractWorkout implements \JsonSerializable
         return $output;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
-        return $this->getName();
+        return (string) $this->getName();
     }
 }

@@ -7,7 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 class Day
 {
-    const WEEK = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+    public const WEEK = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
     /**
      * @var DateTime|null
@@ -24,48 +24,33 @@ class Day
         $this->workouts = new ArrayCollection();
     }
 
-    /**
-     * @return ArrayCollection
-     */
     public function getWorkouts(): ArrayCollection
     {
         return $this->workouts;
     }
 
-    /**
-     * @param ArrayCollection $workouts
-     * @return Day
-     */
     public function setWorkouts(ArrayCollection $workouts): Day
     {
         $this->workouts = $workouts;
         return $this;
     }
 
-    /**
-     * @param mixed $workout
-     */
-    public function addWorkout($workout)
+    public function addWorkout(mixed $workout): ?static
     {
         if ($this->workouts->contains($workout)) {
-            return;
+            return null;
         }
 
         $this->workouts->add($workout);
         return $this;
     }
 
-    public function updateWorkout($key, $workout)
+    public function updateWorkout($key, $workout): void
     {
         $this->workouts->set($key, $workout);
-
-        return;
     }
 
-    /**
-     * @param mixed $workout
-     */
-    public function removeWorkout($workout)
+    public function removeWorkout(mixed $workout): void
     {
         if (!$this->workouts->contains($workout)) {
             return;
@@ -74,18 +59,11 @@ class Day
         $this->workouts->removeElement($workout);
     }
 
-    /**
-     * @return DateTime|null
-     */
     public function getDate(): ?DateTime
     {
         return $this->date;
     }
 
-    /**
-     * @param DateTime|null $date
-     * @return Day
-     */
     public function setDate(?DateTime $date): Day
     {
         $this->date = $date;

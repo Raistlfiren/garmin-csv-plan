@@ -8,14 +8,12 @@ use Symfony\Component\Console\Style\OutputStyle;
 
 class HandlerFactory
 {
-    /**
-     * @var $iterableHandlers
-     */
-    protected $iterableHandlers;
-
-    public function __construct(iterable $handlers)
-    {
-        $this->iterableHandlers = $handlers;
+    public function __construct(
+        /**
+         * @var $iterableHandlers
+         */
+        protected iterable $iterableHandlers
+    ) {
     }
 
     public function buildCommand(HandlerOptions $handlerOptions)

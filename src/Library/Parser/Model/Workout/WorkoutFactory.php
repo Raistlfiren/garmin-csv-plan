@@ -22,5 +22,6 @@ class WorkoutFactory
             default:
                 break;
         }
+        return null;
     }
 }

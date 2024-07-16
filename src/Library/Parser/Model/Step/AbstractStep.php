@@ -23,16 +23,6 @@ abstract class AbstractStep implements \JsonSerializable
     /**
      * @var int|null
      */
-    protected $order;
-
-    /**
-     * @var string|null
-     */
-    protected $notes;
-
-    /**
-     * @var int|null
-     */
     protected $garminID;
 
     /**
@@ -55,10 +45,12 @@ abstract class AbstractStep implements \JsonSerializable
      */
     protected $swimmingEquipment;
 
-    public function __construct($stepText, $notes, $stepOrder, $swimming)
+    /**
+     * @param int|null $stepOrder
+     * @param string|null $notes
+     */
+    public function __construct($stepText, protected $notes, protected $order, $swimming)
     {
-        $this->notes = $notes;
-        $this->order = $stepOrder;
         $duration = $this->parseTextDuration($stepText);
         $target = $this->parseTextTarget($stepText);
 
@@ -75,25 +67,33 @@ abstract class AbstractStep implements \JsonSerializable
     public function parseTextDuration($stepDetailsText)
     {
         $regex = '/^\s*([^ ]*)/';
-        $result = $stepDetailsText && preg_match($regex, $stepDetailsText, $duration);
-
-        if ($result && isset($duration[1]) && ! empty($duration[1])) {
-            return trim($duration[1]);
+        $result = $stepDetailsText && preg_match($regex, (string) $stepDetailsText, $duration);
+        if (!$result) {
+            return null;
         }
-
-        return null;
+        if (!isset($duration[1])) {
+            return null;
+        }
+        if (empty($duration[1])) {
+            return null;
+        }
+        return trim($duration[1]);
     }
 
     public function parseTextTarget($stepDetailsText)
     {
         $regex = '/@\s*(.*)/';
-        $result = $stepDetailsText && preg_match($regex, $stepDetailsText, $target);
-
-        if ($result && isset($target[1]) && ! empty($target[1])) {
-            return trim($target[1]);
+        $result = $stepDetailsText && preg_match($regex, (string) $stepDetailsText, $target);
+        if (!$result) {
+            return null;
         }
-
-        return null;
+        if (!isset($target[1])) {
+            return null;
+        }
+        if (empty($target[1])) {
+            return null;
+        }
+        return trim($target[1]);
     }
 
     abstract protected function getStepTypeId();
@@ -138,54 +138,33 @@ abstract class AbstractStep implements \JsonSerializable
         return array_merge($steps, $duration, $target, $swimmingStroke, $swimmingEquipment);
     }
 
-    /**
-     * @return int|null
-     */
     public function getGarminID(): ?int
     {
         return $this->garminID;
     }
 
-    /**
-     * @param int|null $garminID
-     * @return AbstractStep
-     */
     public function setGarminID(?int $garminID): AbstractStep
     {
         $this->garminID = $garminID;
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getNotes(): ?string
     {
         return $this->notes;
     }
 
-    /**
-     * @param string|null $notes
-     * @return AbstractStep
-     */
     public function setNotes(?string $notes): AbstractStep
     {
         $this->notes = $notes;
         return $this;
     }
 
-    /**
-     * @return AbstractWorkout|null
-     */
     public function getWorkout(): ?AbstractWorkout
     {
         return $this->workout;
     }
 
-    /**
-     * @param AbstractWorkout|null $workout
-     * @return AbstractStep
-     */
     public function setWorkout(?AbstractWorkout $workout): AbstractStep
     {
         $this->workout = $workout;

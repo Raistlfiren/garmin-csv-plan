@@ -4,32 +4,33 @@ namespace App\Library\Parser\Model\Target;
 
 class HRZoneTarget extends AbstractTarget
 {
-    const REGEX = '/^z(\d)$/';
+    public const REGEX = '/^z(\d)$/';
 
-    protected $zone;
-
-    public static function testHR($hrText)
+    public static function testHR($hrText): false|\App\Library\Parser\Model\Target\HRZoneTarget
     {
-        $result = $hrText && preg_match(self::REGEX, $hrText, $hr);
-
-        if ($result && isset($hr[1]) && ! empty($hr[1])) {
-            return new HRZoneTarget($hr[1]);
+        $result = $hrText && preg_match(self::REGEX, (string) $hrText, $hr);
+        if (!$result) {
+            return false;
         }
-
-        return false;
+        if (!isset($hr[1])) {
+            return false;
+        }
+        if (empty($hr[1])) {
+            return false;
+        }
+        return new HRZoneTarget($hr[1]);
     }
 
-    public function __construct($zone)
+    public function __construct(protected $zone)
     {
-        $this->zone = $zone;
     }
 
-    protected function getTypeId()
+    protected function getTypeId(): int
     {
         return 4;
     }
 
-    protected function getTypeKey()
+    protected function getTypeKey(): string
     {
         return 'heart.rate.zone';
     }

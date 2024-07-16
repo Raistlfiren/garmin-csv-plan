@@ -4,7 +4,7 @@ namespace App\Library\Parser;
 
 final class WorkoutTypes
 {
-    const WORKOUTS = [
+    public const WORKOUTS = [
         'running',
         'swimming',
         'cycling',

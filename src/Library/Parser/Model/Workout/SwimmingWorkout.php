@@ -6,9 +6,9 @@ use App\Library\Parser\Helper\DistanceUnit;
 
 class SwimmingWorkout extends AbstractWorkout
 {
-    protected $poolSizeLength;
+    public $poolSizeLength;
 
-    protected $poolSizeUnit;
+    public $poolSizeUnit;
 
     public function __construct($name, $poolSize = null)
     {
@@ -21,12 +21,12 @@ class SwimmingWorkout extends AbstractWorkout
         parent::__construct($name);
     }
 
-    protected function getSportTypeId()
+    protected function getSportTypeId(): int
     {
         return 4;
     }
 
-    protected function getSportTypeKey()
+    protected function getSportTypeKey(): string
     {
         return 'swimming';
     }
@@ -35,7 +35,7 @@ class SwimmingWorkout extends AbstractWorkout
     {
         $regex = '/^(\d+(.\d+)?)\s*(m|yds)$/';
 
-        $result = $poolSize && preg_match($regex, $poolSize, $length);
+        $result = $poolSize && preg_match($regex, (string) $poolSize, $length);
 
         if ($result && isset($length[1]) && ! empty($length[1]) && isset($length[3]) && ! empty($length[3])) {
             $this->poolSizeLength = $length[1];

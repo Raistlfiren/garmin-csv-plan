@@ -9,34 +9,22 @@ class WeekCollection extends ArrayCollection
     /** @var array $days */
     protected $days;
 
-    /**
-     * @return array
-     */
     public function getDays(): array
     {
         return $this->days;
     }
 
-    /**
-     * @param array $days
-     */
     public function setDays(array $days): void
     {
         $this->days = $days;
     }
 
-    /**
-     * @param mixed $day
-     */
-    public function addDay($day)
+    public function addDay(mixed $day): void
     {
         $this->days[] = $day;
     }
 
-    /**
-     * @param mixed $day
-     */
-    public function removeDay($day)
+    public function removeDay(mixed $day): void
     {
         if (false !== $key = array_search($day, $this->days, true)) {
             array_splice($this->days, $key, 1);

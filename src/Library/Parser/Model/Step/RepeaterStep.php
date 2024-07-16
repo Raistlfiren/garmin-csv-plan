@@ -11,47 +11,31 @@ class RepeaterStep implements \JsonSerializable
      */
     protected $steps;
 
-    protected $numberOfIterations;
-
-    protected $order;
-
     /**
      * @var int|null
      */
     protected $garminID;
 
-    public function __construct($numberOfIterations, $stepOrder)
+    public function __construct(protected $numberOfIterations, protected $order)
     {
-        $this->order = $stepOrder;
-        $this->numberOfIterations = $numberOfIterations;
         $this->steps = new ArrayCollection();
     }
 
-    /**
-     * @return ArrayCollection|null
-     */
     public function getSteps(): ?ArrayCollection
     {
         return $this->steps;
     }
 
-    /**
-     * @param ArrayCollection|null $steps
-     * @return RepeaterStep
-     */
     public function setSteps(?ArrayCollection $steps): RepeaterStep
     {
         $this->steps = $steps;
         return $this;
     }
 
-    /**
-     * @param mixed $step
-     */
-    public function addStep($step)
+    public function addStep(mixed $step): ?static
     {
         if ($this->steps->contains($step)) {
-            return;
+            return null;
         }
 
         $this->steps->add($step);
@@ -59,10 +43,7 @@ class RepeaterStep implements \JsonSerializable
         return $this;
     }
 
-    /**
-     * @param mixed $step
-     */
-    public function removeStep($step)
+    public function removeStep(mixed $step): void
     {
         if (!$this->steps->contains($step)) {
             return;
@@ -79,11 +60,7 @@ class RepeaterStep implements \JsonSerializable
         return $this->numberOfIterations;
     }
 
-    /**
-     * @param mixed $numberOfIterations
-     * @return RepeaterStep
-     */
-    public function setNumberOfIterations($numberOfIterations)
+    public function setNumberOfIterations(mixed $numberOfIterations): static
     {
         $this->numberOfIterations = $numberOfIterations;
         return $this;
@@ -106,18 +83,11 @@ class RepeaterStep implements \JsonSerializable
         ];
     }
 
-    /**
-     * @return int|null
-     */
     public function getGarminID(): ?int
     {
         return $this->garminID;
     }
 
-    /**
-     * @param int|null $garminID
-     * @return RepeaterStep
-     */
     public function setGarminID(?int $garminID): RepeaterStep
     {
         $this->garminID = $garminID;

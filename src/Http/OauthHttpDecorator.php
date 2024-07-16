@@ -7,10 +7,10 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 class OauthHttpDecorator
 {
     public function __construct(
-        private string $consumerKey,
-        private string $consumerSecret,
+        private readonly string $consumerKey,
+        private readonly string $consumerSecret,
         private string $token = '',
-        private string $tokenSecret = '',
+        private readonly string $tokenSecret = '',
     ) {
     }
 
@@ -19,7 +19,7 @@ class OauthHttpDecorator
         string $method,
         string $requestUri,
         array $options = [],
-    ) {
+    ): \Symfony\Contracts\HttpClient\ResponseInterface {
         if (! isset($options['query'])) {
             $options['query'] = [];
         }

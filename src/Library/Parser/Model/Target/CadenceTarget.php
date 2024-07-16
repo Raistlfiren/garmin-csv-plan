@@ -4,35 +4,39 @@ namespace App\Library\Parser\Model\Target;
 
 class CadenceTarget extends AbstractTarget
 {
-    const REGEX = '/^(\d{1,3})\s*-\s*(\d{1,3})\s*rpm$/';
+    public const REGEX = '/^(\d{1,3})\s*-\s*(\d{1,3})\s*rpm$/';
 
-    protected $from;
-
-    protected $to;
-
-    public static function testCadence($cadenceText)
+    public static function testCadence($cadenceText): false|\App\Library\Parser\Model\Target\CadenceTarget
     {
-        $result = $cadenceText && preg_match(self::REGEX, $cadenceText, $cadence);
-
-        if ($result && isset($cadence[1]) && ! empty($cadence[1]) && isset($cadence[2]) && ! empty($cadence[2])) {
-            return new CadenceTarget($cadence[1], $cadence[2]);
+        $result = $cadenceText && preg_match(self::REGEX, (string) $cadenceText, $cadence);
+        if (!$result) {
+            return false;
         }
-
-        return false;
+        if (!isset($cadence[1])) {
+            return false;
+        }
+        if (empty($cadence[1])) {
+            return false;
+        }
+        if (!isset($cadence[2])) {
+            return false;
+        }
+        if (empty($cadence[2])) {
+            return false;
+        }
+        return new CadenceTarget($cadence[1], $cadence[2]);
     }
 
-    public function __construct($from, $to)
+    public function __construct(protected $from, protected $to)
     {
-        $this->from = $from;
-        $this->to = $to;
     }
 
-    protected function getTypeId()
+    protected function getTypeId(): int
     {
         return 3;
     }
 
-    protected function getTypeKey()
+    protected function getTypeKey(): string
     {
         return 'cadence.zone';
     }

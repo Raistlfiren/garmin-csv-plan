@@ -4,7 +4,7 @@ namespace App\Library\Parser\Model\Swim;
 
 class StrokeType implements \JsonSerializable
 {
-    const STROKES = [
+    public const STROKES = [
         'any_stroke' => 'Any Strokes',
         'backstroke' => 'Backstroke',
         'breathstroke' => 'Breathstroke',
@@ -14,17 +14,14 @@ class StrokeType implements \JsonSerializable
         'mixed' => 'Mixed'
     ];
 
-    protected $strokeKey;
-
-    protected $strokeId;
-
-    public static function testStroke($swimText)
+    public static function testStroke($swimText): \App\Library\Parser\Model\Swim\StrokeType
     {
         $counter = 1;
         foreach (self::STROKES as $key => $stroke) {
-            if (stripos($swimText, $stroke) !== false) {
+            if (stripos((string) $swimText, $stroke) !== false) {
                 return new StrokeType($key, $counter);
             }
+
             $counter++;
         }
 
@@ -32,10 +29,8 @@ class StrokeType implements \JsonSerializable
         return new StrokeType('any_strokes', 1);
     }
 
-    public function __construct($strokeKey, $strokeId)
+    public function __construct(protected $strokeKey, protected $strokeId)
     {
-        $this->strokeKey = $strokeKey;
-        $this->strokeId = $strokeId;
     }
 
     protected function getTypeKey()
