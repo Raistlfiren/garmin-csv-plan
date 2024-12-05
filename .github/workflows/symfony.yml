@@ -20,7 +20,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Docker Build and Up
-        run: docker-compose run garmin-dev composer install
+        run: docker compose run garmin-dev composer install
 
       - name: Run PHPUnit Tests
-        run: docker-compose run garmin-dev vendor/bin/phpunit
+        run: docker compose run garmin-dev vendor/bin/phpunit
