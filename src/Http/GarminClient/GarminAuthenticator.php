@@ -76,7 +76,9 @@ class GarminAuthenticator
             }
 
             // Access token must be expired so lets refresh it
-            if ($oauthData['refresh_token_expires_at'] < time()) {
+            if ($oauthData['refresh_token_expires_at'] > time()) {
+                $this->fetchConsumerCredentials();
+                // Sweet the refresh token is still good so lets refresh the access token
                 $oauthData = $this->exchangeOauth1TokenForOauth2Token($oauthData['token'], $oauthData['token_secret']);
 
                 $this->refreshFile($filePath, $oauthData);
