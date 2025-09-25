@@ -2,6 +2,7 @@
 
 namespace App\Library\Handler;
 
+use App\Http\Mfa\CodeProviderInterface;
 use App\Library\Garmin\Client;
 use App\Library\Handler\Event\HandlerEvent;
 use App\Library\Handler\Event\HandlerEvents;
@@ -45,7 +46,7 @@ abstract class AbstractHandler implements HandlerInterface
     ) {
     }
 
-    public function handle(HandlerOptions $handlerOptions): void
+    public function handle(HandlerOptions $handlerOptions, CodeProviderInterface $mfaCodeProvider): void
     {
         // Validate the CSV file
         $this->validateFile($handlerOptions);
@@ -59,7 +60,7 @@ abstract class AbstractHandler implements HandlerInterface
         // See if we should send it to Garmin or not
         if (! $handlerOptions->getDryrun()) {
             // Create a new instance of Garmin client based upon .env or specified username/password
-            $this->authenticatingToGarmin($handlerOptions);
+            $this->authenticatingToGarmin($handlerOptions, $mfaCodeProvider);
 
             // Check to see if we should delete workouts
             if ($handlerOptions->getDelete()) {
@@ -104,12 +105,16 @@ abstract class AbstractHandler implements HandlerInterface
         return $workouts;
     }
 
-    public function authenticatingToGarmin(HandlerOptions $handlerOptions): void
+    public function authenticatingToGarmin(HandlerOptions $handlerOptions, CodeProviderInterface $mfaCodeProvider): void
     {
         $event = new HandlerEvent($handlerOptions);
         $this->dispatcher->dispatch($event, HandlerEvents::AUTHENTICATE_GARMIN_STARTED);
 
-        $this->garminHelper->createGarminClient($handlerOptions->getEmail(), $handlerOptions->getPassword());
+        $this->garminHelper->createGarminClient(
+            $handlerOptions->getEmail(),
+            $handlerOptions->getPassword(),
+            $mfaCodeProvider,
+        );
 
         $this->dispatcher->dispatch($event, HandlerEvents::AUTHENTICATE_GARMIN_ENDED);
     }

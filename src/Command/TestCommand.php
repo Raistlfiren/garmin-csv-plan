@@ -3,6 +3,7 @@
 namespace App\Command;
 
 use App\Http\GarminClient\GarminClient;
+use App\Http\Mfa\StyleCodeProvider;
 use App\Library\Handler\HandlerFactory;
 use App\Library\Handler\HandlerOptions;
 use App\Subscriber\WorkoutCommandSubscriber;
@@ -37,6 +38,9 @@ class TestCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
         $io->title('Starting GARMIN test command');
+
+        $mfaCodeProvider = new StyleCodeProvider($io);
+        $this->garminClient->setMfaCodeProvider($mfaCodeProvider);
 
         $this->garminClient->getWorkoutList(0, 9999);
 

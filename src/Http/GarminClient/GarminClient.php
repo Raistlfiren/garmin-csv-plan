@@ -3,6 +3,7 @@
 namespace App\Http\GarminClient;
 
 use App\Http\GarminClient\GarminAuthenticator;
+use App\Http\Mfa\CodeProviderInterface;
 use Symfony\Component\HttpClient\HttpOptions;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
@@ -23,6 +24,11 @@ class GarminClient
         $this->garminAuthenticator->setGarminUsername($username);
         $this->garminAuthenticator->setGarminPassword($password);
     }
+
+    public function setMfaCodeProvider(CodeProviderInterface $codeProvider): void
+    {
+        $this->garminAuthenticator->setMfaCodeProvider($codeProvider);
+    }   
 
     public function setup(): void
     {

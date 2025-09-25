@@ -2,7 +2,9 @@
 
 namespace App\Http\GarminClient;
 
+use App\Http\Mfa\CodeProviderInterface;
 use App\Http\OauthHttpDecorator;
+use Symfony\Component\BrowserKit\HttpBrowser;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
@@ -23,6 +25,7 @@ class GarminAuthenticator
     public const GARMIN_DEFAULT_PARAMETERS  = [
         'id' => 'gauth-widget',
         'embedWidget' => 'true',
+        'locale' => 'en',
     ];
 
     public const GARMIN_EMBED_PARAMETERS = [
@@ -43,6 +46,10 @@ class GarminAuthenticator
 
     protected string $consumerSecret = '';
 
+    protected ?CodeProviderInterface $mfaCodeProvider = null;
+
+    private HttpBrowser $browser;
+
     public function __construct(
         private readonly HttpClientInterface $httpClient,
         #[Autowire(env: 'GARMIN_USERNAME')]
@@ -54,6 +61,7 @@ class GarminAuthenticator
         #[Autowire(env: 'GARMIN_AUTHENTICATION_FILE_PATH')]
         private readonly string $garminAuthenticationFilePath,
     ) {
+        $this->browser = new HttpBrowser($httpClient);
     }
 
     public function authenticate()
@@ -117,64 +125,89 @@ class GarminAuthenticator
 
     protected function initializeCookies(): void
     {
-        $this->httpClient->request('GET', self::GARMIN_SSO_EMBED_URL, [
-            'query' => self::GARMIN_EMBED_PARAMETERS,
-        ]);
+        $this->browser->request('GET', $this->makeSsoUrl(self::GARMIN_SSO_EMBED_URL));
     }
 
     protected function fetchCSRFToken(): string
     {
-        $response = $this->httpClient->request('GET', self::GARMIN_SSO_SIGN_IN_URL, [
-            'query' => self::GARMIN_SIGN_IN_PARAMETERS,
-        ]);
+        $this->browser->request('GET', $this->makeSsoUrl(self::GARMIN_SSO_SIGN_IN_URL));
 
-        $responseBody = $response->getContent();
+        $responseBody = $this->browser->getResponse()->getContent();
 
         preg_match('/name="_csrf"\s+value="(.+?)"/', $responseBody, $csrfTokens);
 
-        if (! isset($csrfTokens[1])) {
-            throw new ClientException('CSRF token is missing.');
+        if (isset($csrfTokens[1])) {
+            return $csrfTokens[1];
         }
 
-        return $csrfTokens[1];
+        throw new ClientException('CSRF token is missing.');
+    }
+
+    protected function makeSsoUrl(string $baseUrl): string
+    {
+        return $baseUrl . '?' . http_build_query(array_merge(self::GARMIN_SIGN_IN_PARAMETERS, [
+            'clientId' => $this->consumerKey,
+            'consumeServiceTicket' => 'true',
+        ]));
     }
 
     protected function submitLoginRequest(string $csrfToken)
     {
-        $response = $this->httpClient->request('POST', self::GARMIN_SSO_SIGN_IN_URL, [
-            'query' => self::GARMIN_SIGN_IN_PARAMETERS,
-            'headers' => [
-                'referer' => self::GARMIN_SSO_SIGN_IN_URL,
-            ],
-            'body' => [
-                'username' => $this->garminUsername,
-                'password' => $this->garminPassword,
+        $this->browser->submitForm('login-btn-signin', [
+            'username' => $this->garminUsername,
+            'password' => $this->garminPassword,
+            'embed' => 'true',
+            '_csrf' => $csrfToken,
+        ], 'POST', ['referer' => self::GARMIN_SSO_SIGN_IN_URL]);
+
+        $responseBody = $this->browser->getResponse()->getContent();
+        $title = $this->parseTitle($responseBody);
+
+        if (\str_contains($title, 'MFA')) {
+            if (! isset($this->mfaCodeProvider)) {
+                throw new ClientException('MFA required, but no CodeProviderInterface is set.');
+            }
+            $mfaCode = $this->mfaCodeProvider->provide();
+
+            $this->browser->submitForm('mfa-verification-code-submit', [
+                'mfa-code' => $mfaCode,
                 'embed' => true,
                 '_csrf' => $csrfToken,
-            ]
-        ]);
+                'fromPage' => 'setupEnterMfaCode',
+            ], 'POST', ['referer' => self::GARMIN_SSO_SIGN_IN_URL]);
 
-
-        $responseBody = $response->getContent(false);
-
-        preg_match('/<title>(.+?)<\/title>/', $responseBody, $titles);
-
-        if (! isset($titles[1])) {
-            throw new ClientException('TITLE is missing.');
+            $responseBody = $this->browser->getResponse()->getContent();
+            $title = $this->parseTitle($responseBody);
         }
-
-        $title = $titles[1];
 
         // YA!!!!! we got into Garmin
         if ($title === 'Success') {
-            preg_match('/embed\?ticket=([^"]+)"/', $responseBody, $tokens);
-
-            if (isset($tokens[1])) {
-                return $tokens[1];
-            }
+            return $this->parseTicket($responseBody);
         }
 
-        throw new ClientException('Invalid title!');
+        throw new ClientException('Invalid title: ' . $title);
+    }
+
+    private function parseTitle(string $responseBody): string
+    {
+        preg_match('/<title>(.+?)<\/title>/', $responseBody, $titles);
+
+        if (isset($titles[1])) {
+            return $titles[1];
+        }
+
+        throw new ClientException('Title is missing from response body.');
+    }
+
+    private function parseTicket(string $responseBody): string
+    {
+        preg_match('/embed\?ticket=([^"]+)"/', $responseBody, $tokens);
+
+        if (isset($tokens[1])) {
+            return $tokens[1];
+        }
+
+        throw new ClientException('Unable to parse ticket from response body.');
     }
 
     public function getOauthToken(string $ticket): array
@@ -240,5 +273,10 @@ class GarminAuthenticator
     public function setGarminPassword(string $garminPassword): void
     {
         $this->garminPassword = $garminPassword;
+    }
+
+    public function setMfaCodeProvider(CodeProviderInterface $codeProvider): void
+    {
+        $this->mfaCodeProvider = $codeProvider;
     }
 }
