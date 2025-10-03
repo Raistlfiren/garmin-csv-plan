@@ -4,13 +4,15 @@ namespace App\Library\Handler;
 
 use App\Library\Handler\Event\HandlerEvent;
 use App\Library\Handler\Event\HandlerEvents;
+use App\Http\Mfa\CodeProviderInterface;
+
 use DateTime;
 
 class ScheduleHandler extends AbstractHandler
 {
-    public function handle(HandlerOptions $handlerOptions): void
+    public function handle(HandlerOptions $handlerOptions, CodeProviderInterface $mfaCodeProvider): void
     {
-        parent::handle($handlerOptions);
+        parent::handle($handlerOptions, $mfaCodeProvider);
 
         // Get and parse the inputted start and end date
         $start = $this->convertStringToDate($handlerOptions->getStartDate());

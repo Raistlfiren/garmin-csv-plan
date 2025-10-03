@@ -2,9 +2,7 @@
 
 namespace App\Library\Handler;
 
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\OutputStyle;
+use App\Http\Mfa\CodeProviderInterface;
 
 class HandlerFactory
 {
@@ -16,11 +14,12 @@ class HandlerFactory
     ) {
     }
 
-    public function buildCommand(HandlerOptions $handlerOptions)
+    public function buildCommand(HandlerOptions $handlerOptions, CodeProviderInterface $mfaCodeProvider): void
     {
         foreach ($this->iterableHandlers as $handler) {
             if ($handler->supports($handlerOptions->getCommand())) {
-                return $handler->handle($handlerOptions);
+                $handler->handle($handlerOptions, $mfaCodeProvider);
+                return;
             }
         }
 

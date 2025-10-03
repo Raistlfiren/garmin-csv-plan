@@ -2,6 +2,7 @@
 
 namespace App\Command;
 
+use App\Http\Mfa\StyleCodeProvider;
 use App\Library\Handler\HandlerFactory;
 use App\Library\Handler\HandlerOptions;
 use App\Subscriber\WorkoutCommandSubscriber;
@@ -84,7 +85,9 @@ or import **AND** schedule the workouts.', 'import')
 
         $this->registerSubscriber($io, $this->dispatcher);
 
-        $this->handlerFactory->buildCommand($handlerOptions);
+        $mfaCodeProvider = new StyleCodeProvider($io);
+
+        $this->handlerFactory->buildCommand($handlerOptions, $mfaCodeProvider);
 
         return Command::SUCCESS;
     }

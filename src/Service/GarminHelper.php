@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use App\Http\GarminClient\GarminClient;
+use App\Http\Mfa\CodeProviderInterface;
 use App\Library\Parser\Model\Day;
 use App\Library\Parser\Model\Step\AbstractStep;
 use App\Library\Parser\Model\Workout\AbstractWorkout;
@@ -17,8 +18,10 @@ class GarminHelper
     ) {
     }
 
-    public function createGarminClient($username, $password): void
+    public function createGarminClient($username, $password, CodeProviderInterface $mfaCodeProvider): void
     {
+        $this->client->setMfaCodeProvider($mfaCodeProvider);
+
         if (empty($username)) {
             return;
         }
