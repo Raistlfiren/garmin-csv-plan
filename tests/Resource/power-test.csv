@@ -1,0 +1,35 @@
+WEEK,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday
+1,"running: Wattage Pyramid
+  - warmup: 10:00 @ 150-170 w
+  - run: 1:00 @ 260-270 w
+  - recover: 1:00 @ 150-170 w
+  - run: 2:00 @ 250-260 w
+  - recover: 1:30 @ 150-170 w
+  - run: 3:00 @ 240-250 w
+  - recover: 2:00 @ 150-170 w
+  - run: 0.8km @ 230-240 w
+  - recover: 2:00 @ 150-170 w
+  - run: 0.4km @ 250-260 w
+  - cooldown: 5:00 @ 140-150 w","running: Open Ended Power Test
+  - warmup: 15:00 @ 140-160 w
+  - go: lap-button @ 55-65 %cp
+  - run: 20:00 @ 250 w
+  - recover: lap-button @ 100 w
+  - run: 3:00 @ 110 %cp
+  - cooldown: lap-button","running: Syntax Stress Test
+  - warmup: 10:00 @ 150w
+  - run: 5:00 @ 200 - 220 watts
+  - recover: 2:00 @ 140 w
+  - run: 5:00 @ 90-95%cp
+  - recover: 2:00 @ 60 - 70 pcp
+  - run: 1:00 @ 350-370w
+  - cooldown: 5:00 @ 130 watts",,"running: Nested Power Intervals
+  - warmup: 10:00 @ 60-70 %cp
+  - repeat: 2
+    - run: 1.5km @ 90-95 %cp
+    - recover: 2:00 @ 60-70 %cp
+    - repeat: 4
+      - run: 0:30 @ 110-120 %cp
+      - recover: 0:30 @ 50-60 %cp
+    - recover: 3:00 @ 55-65 %cp
+  - cooldown: 10:00 @ 60-70 %cp.",,
