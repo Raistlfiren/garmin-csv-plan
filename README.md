@@ -106,26 +106,27 @@ bin/console garmin:workout <file.csv> schedule -m <garmin_email> -p <garmin_pass
 ## Options
 
 
-| Short form  | Long form | Description |
-| ------------- | ------------- | ------------- |
-| -m  | --email=EMAIL  | Email to login to Garmin **[default: ""]** |
-| -p  | --password=PASSWORD  | Password to login to Garmin **[default: ""]** |
-| -x  | --delete  | Delete previous workouts from CSV file |
-| -X  | --delete-only  | NLY delete workouts that are contained in the CSV file |
-|   | --dry-run  | Dry run that will prevent anything from being created or deleted from Garmin |
-|   | --pool-size  | The pool size specified for all workouts in the plan Ex.: 25yds OR 100m |
-| -r  | --prefix=PREFIX  | A prefix to put before every workout name/title |
-| -s  | --start=START  |  Date of the FIRST day of the first week of the plan Ex.: 2021-01-01 YYYY-MM-DD |
-| -d  | --end=END  | Date of the LAST day of the last week of the plan Ex.: 2021-01-31 YYYY-MM-DD |
-| -h  | --help | Display help message |
-| -q  | --quiet  | Do not output any message |
-| -V  | --version  | Display this application version |
-|   | --ansi  | Force ANSI output |
-|   | --no-ansi  | Disable ANSI output|
-| -n  | --no-interaction  | Do not ask any interactive question |
-| -e  | --env=ENV  | The Environment name. **[default: "dev"]** |
-|  | --no-debug  | Switches off debug mode. |
-| -v OR -vv OR -vvv  | --verbose  | Increase the verbosity of messages: 1 for normal output, 2 for more verbose output and 3 for debug |
+| Short form        | Long form           | Description |
+|-------------------|---------------------| ------------- |
+| -m                | --email=EMAIL       | Email to login to Garmin **[default: ""]** |
+| -p                | --password=PASSWORD | Password to login to Garmin **[default: ""]** |
+| -P                | --critical-power    | This number is only used when a power target is specified as a % of critical power. If it is omitted then power targets must be specified in Watts directly. |
+| -x                | --delete            | Delete previous workouts from CSV file |
+| -X                | --delete-only       | NLY delete workouts that are contained in the CSV file |
+|                   | --dry-run           | Dry run that will prevent anything from being created or deleted from Garmin |
+|                   | --pool-size         | The pool size specified for all workouts in the plan Ex.: 25yds OR 100m |
+| -r                | --prefix=PREFIX     | A prefix to put before every workout name/title |
+| -s                | --start=START       |  Date of the FIRST day of the first week of the plan Ex.: 2021-01-01 YYYY-MM-DD |
+| -d                | --end=END           | Date of the LAST day of the last week of the plan Ex.: 2021-01-31 YYYY-MM-DD |
+| -h                | --help              | Display help message |
+| -q                | --quiet             | Do not output any message |
+| -V                | --version           | Display this application version |
+|                   | --ansi              | Force ANSI output |
+|                   | --no-ansi           | Disable ANSI output|
+| -n                | --no-interaction    | Do not ask any interactive question |
+| -e                | --env=ENV           | The Environment name. **[default: "dev"]** |
+|                   | --no-debug          | Switches off debug mode. |
+| -v OR -vv OR -vvv | --verbose           | Increase the verbosity of messages: 1 for normal output, 2 for more verbose output and 3 for debug |
 
 ## Developing and running the program through Docker
 1) Start by building and running the docker file - `docker-compose up garmin-dev`
