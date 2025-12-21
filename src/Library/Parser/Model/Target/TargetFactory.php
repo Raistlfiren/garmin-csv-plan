@@ -4,7 +4,7 @@ namespace App\Library\Parser\Model\Target;
 
 class TargetFactory
 {
-    public static function build($targetText)
+    public static function build($targetText, ?int $criticalPower = null)
     {
         $paceTarget = PaceTarget::testPace($targetText);
 
@@ -23,6 +23,13 @@ class TargetFactory
         if ($hrCustomTarget) {
             return $hrCustomTarget;
         }
+
+        $powerTarget = PowerTarget::testPower($targetText, $criticalPower);
+
+        if ($powerTarget) {
+           return $powerTarget;
+        }
+
         return null;
     }
 }

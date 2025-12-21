@@ -29,12 +29,12 @@ abstract class AbstractWorkout implements \JsonSerializable, \Stringable
     /**
      * @param string|null $name
      */
-    public function __construct(protected $name)
+    public function __construct(protected $name, protected ?int $criticalPower = null)
     {
         $this->steps = new ArrayCollection();
     }
 
-    public function steps($steps, $swimming = false)
+    public function steps(array $steps, bool $swimming = false): self
     {
         $repStep = [];
 
@@ -44,7 +44,7 @@ abstract class AbstractWorkout implements \JsonSerializable, \Stringable
             $parameters = $this->parseStepDetails($step);
             $notes = $this->parseStepNotes($step);
 
-            $stepFactory = StepFactory::build($header, $parameters, $notes, $index, $swimming);
+            $stepFactory = StepFactory::build($header, $parameters, $notes, $index, $swimming, $this->criticalPower);
 
             if ($stepFactory instanceof RepeaterStep) {
                 //Store it into array with the index being whitespace to reference children steps later

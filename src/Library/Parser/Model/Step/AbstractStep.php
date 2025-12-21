@@ -49,13 +49,13 @@ abstract class AbstractStep implements \JsonSerializable
      * @param int|null $stepOrder
      * @param string|null $notes
      */
-    public function __construct($stepText, protected $notes, protected $order, $swimming)
+    public function __construct($stepText, protected $notes, protected $order, $swimming, protected ?int $criticalPower = null)
     {
         $duration = $this->parseTextDuration($stepText);
         $target = $this->parseTextTarget($stepText);
 
         $this->duration = DurationFactory::build($duration);
-        $this->target = TargetFactory::build($target);
+        $this->target = TargetFactory::build($target, $criticalPower);
 
         // Check for specific strokes and equipment
         if ($swimming) {

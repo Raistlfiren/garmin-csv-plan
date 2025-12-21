@@ -44,8 +44,8 @@ or import **AND** schedule the workouts.', 'import')
             ->addOption('prefix', 'r', InputOption::VALUE_OPTIONAL, 'A prefix to put before every workout name/title', null)
             ->addOption('pool-size', null, InputOption::VALUE_OPTIONAL, 'The pool size specified for all workouts in the plan Ex.: 25yds OR 100m', null)
             ->addOption('start', 's', InputOption::VALUE_REQUIRED, 'Date of the FIRST day of the first week of the plan Ex.: 2021-01-01 YYYY-MM-DD')
-            ->addOption('end', 'd', InputOption::VALUE_REQUIRED, 'Date of the LAST day of the last week of the plan Ex.: 2021-01-31 YYYY-MM-DD');
-
+            ->addOption('end', 'd', InputOption::VALUE_REQUIRED, 'Date of the LAST day of the last week of the plan Ex.: 2021-01-31 YYYY-MM-DD')
+            ->addOption('critical-power', 'P', InputOption::VALUE_REQUIRED, 'Critical power for power-based targets');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -64,6 +64,7 @@ or import **AND** schedule the workouts.', 'import')
         $path = $input->getArgument('csv');
         $start = $input->getOption('start');
         $end = $input->getOption('end');
+        $criticalPower = $input->getOption('critical-power');
 
         if ($command === 'import' && (! empty($start) || ! empty($end))) {
             $io->error('You supplied the START and/or END date for scheduling workouts on a calendar, but IMPORT was specified for the command type. Please specify the schedule argument when running the command. For example - ./bin/console garmin:workout <file>.csv schedule -s <date>');
@@ -82,6 +83,7 @@ or import **AND** schedule the workouts.', 'import')
         $handlerOptions->setStartDate($start);
         $handlerOptions->setEndDate($end);
         $handlerOptions->setCommand($command);
+        $handlerOptions->setCriticalPower($criticalPower);
 
         $this->registerSubscriber($io, $this->dispatcher);
 
