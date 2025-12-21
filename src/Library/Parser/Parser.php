@@ -51,7 +51,7 @@ class Parser
         return count($this->records);
     }
 
-    public function findAllWorkouts($prefix = null, $poolSize = null): array
+    public function findAllWorkouts($prefix = null, $poolSize = null, ?int $criticalPower = null): array
     {
         $workouts = [];
 
@@ -66,7 +66,7 @@ class Parser
                 if (! empty($workoutGroups)) {
                     foreach ($workoutGroups as $workoutGroupText) {
                         //Try to parse workout
-                        $workout = $this->parseWorkout($workoutGroupText, $poolSize);
+                        $workout = $this->parseWorkout($workoutGroupText, $poolSize, $criticalPower);
                         if ($workout) {
                             //Workout must have been made
                             $name = $workout->getName();
@@ -269,9 +269,9 @@ class Parser
         return $steps[0];
     }
 
-    public function parseWorkout($workoutText, $poolSize = null)
+    public function parseWorkout($workoutText, $poolSize = null, ?int $criticalPower = null)
     {
-        //Read first line
+         //Read first line
         $workoutType = $this->parseWorkoutType($workoutText);
         $workoutName = $this->parseWorkoutName($workoutText);
 
@@ -280,6 +280,6 @@ class Parser
         //Read steps into array
         $steps = $this->parseSteps($stepsText);
 
-        return WorkoutFactory::build($workoutType, $workoutName, $steps, $poolSize);
+        return WorkoutFactory::build($workoutType, $workoutName, $steps, $poolSize, $criticalPower);
     }
 }

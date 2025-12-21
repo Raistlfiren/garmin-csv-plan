@@ -46,6 +46,8 @@ class HandlerOptions
      */
     protected $poolSize;
 
+    private ?int $criticalPower = null;
+
     public function getPath(): string
     {
         return $this->path;
@@ -194,6 +196,17 @@ class HandlerOptions
     public function setPoolSize(?string $poolSize): HandlerOptions
     {
         $this->poolSize = $poolSize;
+        return $this;
+    }
+
+    public function getCriticalPower(): ?int
+    {
+        return $this->criticalPower;
+    }
+
+    public function setCriticalPower(?string $criticalPower): self
+    {
+        $this->criticalPower = $criticalPower ? (int) $criticalPower : null;
         return $this;
     }
 }

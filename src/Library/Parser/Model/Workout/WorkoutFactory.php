@@ -4,11 +4,11 @@ namespace App\Library\Parser\Model\Workout;
 
 class WorkoutFactory
 {
-    public static function build($type, $name, $steps, $poolSize = null)
+    public static function build($type, $name, $steps, $poolSize = null, ?int $criticalPower = null)
     {
         switch ($type) {
             case 'running':
-                $workout = new RunningWorkout($name);
+                $workout = new RunningWorkout($name, $criticalPower);
                 return $workout->steps($steps);
             case 'cycling':
                 $workout = new CyclingWorkout($name);
